@@ -11,9 +11,11 @@ export async function submissionsSweeper() {
 	try {
 		const date = moment().subtract("minutes", 10).toISOString();
 		const dumpedSubmissionIds = await dumpUninitialisedSubmissions(date);
-		log.info(
-			`[submissionsSweeper] Dumped uinitialised submissions ${dumpedSubmissionIds} older than ${date}`
-		);
+		if (dumpedSubmissionIds.length != 0) {
+			log.info(
+				`[submissionsSweeper] Dumped uinitialised submissions ${dumpedSubmissionIds} older than ${date}`
+			);
+		}
 
 		setTimeout(() => {
 			submissionsSweeper();

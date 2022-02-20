@@ -12,6 +12,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@alch/alchemy-web3": "^1.2.4",
 		"@babel/cli": "^7.17.3",
 		"@babel/core": "^7.17.5",
 		"body-parser": "^1.19.2",
