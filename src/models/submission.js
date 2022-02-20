@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const SubmissionSchema = new mongoose.Schema(
 	{
@@ -10,6 +10,15 @@ const SubmissionSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		submissionRedditId: {
+			type: String,
+			required: true,
+		},
+		challengeData: {
+			type: String,
+		},
+		challengeDataSignature: { type: String },
+		initStatus: { type: String, required: true },
 	},
 	{
 		timestamps: {},
@@ -23,6 +32,4 @@ const SubmissionSchema = new mongoose.Schema(
 // 	});
 // };
 
-const SubmissionSchema = mongoose.model("Submission", PostSchema);
-
-module.exports = SubmissionSchema;
+export const Submission = mongoose.model("Submission", SubmissionSchema);
