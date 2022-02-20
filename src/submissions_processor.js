@@ -45,11 +45,11 @@ async function processSubmission(submission) {
 		);
 
 		// reply with challenge url
-		// const reply = await submission.reply("Hey, this is trial");
-		// await reply.distinguish({
-		// 	status: true,
-		// 	sticky: true,
-		// });
+		const reply = await submission.reply("Hey, this is trial");
+		await reply.distinguish({
+			status: true,
+			sticky: true,
+		});
 	} catch (e) {
 		log.error(`[processSubmission] ${e}`);
 	}
