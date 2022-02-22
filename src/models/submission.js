@@ -14,11 +14,32 @@ const SubmissionSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		initStatus: { type: String, required: true },
 		challengeData: {
 			type: String,
 		},
 		challengeDataSignature: { type: String },
-		initStatus: { type: String, required: true },
+		donBufferEndsAt: {
+			type: Date,
+		},
+		resolutionBufferEndsAt: {
+			type: Date,
+		},
+		donBuffer: {
+			type: Number,
+		},
+		resolutionBuffer: {
+			type: Number,
+		},
+		tokenC: {
+			type: String,
+		},
+		fee: {
+			type: String,
+		},
+		outcome: {
+			type: String,
+		},
 	},
 	{
 		timestamps: {},

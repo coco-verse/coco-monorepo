@@ -5,6 +5,7 @@ log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { ethers, BigNumber } from "ethers";
 import addresses_test from "./addresses-test.json";
 
+// TODO make this env dependent
 export const addresses = addresses_test;
 
 export const web3Provider = new ethers.providers.JsonRpcProvider(
@@ -24,7 +25,10 @@ export function getGroupContractInstance(groupAddress) {
 export async function getMarketState(groupAddress, marketIdentifier) {
 	try {
 		const groupContract = await getGroupContractInstance(groupAddress);
-		const marketStateArr = groupContract.marketStates(marketIdentifier);
+		const marketStateArr = await groupContract.marketStates(
+			marketIdentifier
+		);
+		console.log(marketStateArr);
 		return {
 			donBufferEndsAt: new Date(
 				Number(marketStateArr[0].toString()) * 1000
@@ -51,7 +55,7 @@ export async function getMarketDetails(groupAddress, marketIdentifier) {
 		return {
 			cToken: marketDetailsArr[0],
 			fee: ethers.utils.formatUnits(marketDetailsArr[1], 18),
-			outcome: marketDetailsArr[2],
+			outcome: marketDetailsArr[2].toString(),
 		};
 	} catch (e) {
 		log.error(

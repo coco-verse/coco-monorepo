@@ -11,6 +11,10 @@ import { submissionsProcessor } from "./submissions_processor";
 import { connectDb } from "./models";
 import { submissionsSweeper } from "./submissions_sweeper";
 import { startEventsSubscription } from "./chain_processor";
+import {
+	updateSubmissionDetails,
+	updateSubmissionToInitialised,
+} from "./db_manager";
 
 const app = express();
 app.use(cors());
