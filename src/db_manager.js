@@ -95,7 +95,7 @@ export async function removeFinNoOutcomeSubmissions() {
 							{ resolutionBufferEndsAt: { $lte: currentTime } },
 							{
 								resolutionBufferEndsAt: {
-									$neq: new Date(0).toISOString(),
+									$ne: new Date(0).toISOString(),
 								},
 							},
 						],

@@ -15,11 +15,17 @@ import {
 	updateSubmissionDetails,
 	updateSubmissionToInitialised,
 } from "./db_manager";
+import { routes } from "./routes";
 
 const app = express();
 app.use(cors());
 app.use(urlencoded({ extended: true }));
 app.use(json());
+
+app.use("/submissions", routes.submissions);
+app.get("/", async function (req, res) {
+	res.send("Ok");
+});
 
 async function main() {
 	await connectDb();
@@ -30,8 +36,3 @@ async function main() {
 }
 
 main();
-
-app.get("/", async function (req, res) {
-	console.log("LALALA");
-	res.send("Ok");
-});

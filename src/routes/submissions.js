@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { models } from "../models";
-const router = Router();
+import { constants } from "./../helpers";
+
+export const router = Router();
 
 router.post("/initialise", async function (req, res, next) {
 	const { submissionIdentifier, challengeData, challengeDataSignature } =
@@ -11,10 +13,11 @@ router.post("/initialise", async function (req, res, next) {
 	// check whether submission is already initialised
 	const submissionDoc = await models.Submission.findOne({
 		submissionIdentifier,
+		initStatus: constants.SUBMISSION_STATUS.UNINITIALIZED,
 	});
 
-	if (submissionDoc.challengeData != undefined) {
-		next("Submission's challenge already initialised");
+	if (submissionDoc != undefined) {
+		next("Submission is already initialised");
 		return;
 	}
 
@@ -25,6 +28,7 @@ router.post("/initialise", async function (req, res, next) {
 		{
 			challengeData,
 			challengeDataSignature,
+			initStatus: constants.SUBMISSION_STATUS.INITIALIZED,
 		}
 	);
 

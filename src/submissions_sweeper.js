@@ -18,20 +18,16 @@ export async function submissionsSweeper() {
 		const dumpedSubmissionsRedditIds = await dumpUninitialisedSubmissions(
 			date
 		);
-		if (dumpedSubmissionsRedditIds.length != 0) {
-			log.info(
-				`[submissionsSweeper] Dumped uinitialised submissions with reddit ids ${dumpedSubmissionsRedditIds}; older than ${date}`
-			);
-		}
+		log.info(
+			`[submissionsSweeper] Dumped ${dumpedSubmissionsRedditIds.length} uinitialised submissions; submission ids=${dumpedSubmissionsRedditIds}; older than=${date}`
+		);
 
 		// initialised submissions with final outcome no
 		const removedSubmissionsRedditIds =
 			await removeFinNoOutcomeSubmissions();
-		if (removedSubmissionsRedditIds.length != 0) {
-			log.info(
-				`[submissionsSweeper] Removed submissions with final outcome=0; reddit ids ${dumpedSubmissionsRedditIds}`
-			);
-		}
+		log.info(
+			`[submissionsSweeper] Removed ${removedSubmissionsRedditIds.length} submissions with final outcome=0; submission ids=${removedSubmissionsRedditIds}`
+		);
 
 		// make sure there's no id repeat in both arrays
 		const finalRedditIds = [
