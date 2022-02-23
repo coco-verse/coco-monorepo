@@ -10,11 +10,9 @@ export async function findSubmission(submissionIdentifier) {
 
 export async function addSubmission(submission) {
 	return models.Submission.create({
-		submissionIdentifier: keccackHash(submission.url),
-		submissionUrl: submission.url,
+		submissionIdentifier: keccackHash(submission.permalink),
+		submissionPermalink: submission.permalink,
 		submissionRedditId: submission.id,
-		challengeData: "",
-		challengeDataSignature: "",
 		initStatus: constants.SUBMISSION_STATUS.UNINITIALIZED,
 	});
 }

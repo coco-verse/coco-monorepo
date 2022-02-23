@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "npm run build && node ./dist/server.js",
+		"start": "PORT=5000 npm run build && node ./dist/server.js",
 		"clean": "rm -rf dist",
 		"build": "npm run clean && babel ./src --out-dir dist --copy-files",
 		"prod": "node ./dist/server.js"

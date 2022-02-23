@@ -14,7 +14,8 @@ const timeoutInternalSecs = 3;
 export async function submissionsSweeper() {
 	try {
 		// uninitiaised submission that are no more valid
-		const date = moment().subtract("minutes", 10).toISOString();
+		// TODO change this to 10 minutes
+		const date = moment().subtract("hours", 10).toISOString();
 		const dumpedSubmissionsRedditIds = await dumpUninitialisedSubmissions(
 			date
 		);

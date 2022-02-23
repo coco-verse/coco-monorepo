@@ -1,5 +1,5 @@
-import submissions from "./submissions";
+import submission from "./submission";
 
 export const routes = {
-	submissions,
+	submission,
 };

@@ -14,6 +14,8 @@ const eventSignatures = {
 		"0x3acea3967c5be24f16b75421c5e477dd8b549db84bdfe6f359ec3eb9f1749ffb",
 	MarketCreated:
 		"0xbc2bccc2713ac25dc4bcda6e2a6c18b5c5cd08d9c00fa807a841a510d6c11a79",
+	Redeemed:
+		"0xa3364817cc6a3d1dfc5e4970c5ff96bbba39cb4182e88c06bad5ca2feffb1dca",
 };
 
 export async function eventsProcessor(error, logValue) {
@@ -43,6 +45,12 @@ export async function eventsProcessor(error, logValue) {
 		groupAddress = logValue.address;
 		log.info(
 			`[eventProcessor] "MarketCreated" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
+		);
+	} else if (eventIdentifier == eventSignatures.Redeemed) {
+		marketIdentifier = logValue.topics[1];
+		groupAddress = logValue.address;
+		log.info(
+			`[eventProcessor] "Redeemed" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
 		);
 	} else {
 		log.info(

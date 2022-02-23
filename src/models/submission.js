@@ -2,10 +2,11 @@ import mongoose from "mongoose";
 
 const SubmissionSchema = new mongoose.Schema(
 	{
-		submissionUrl: {
+		submissionPermalink: {
 			type: String,
 			required: true,
 		},
+		// submissionIdentifier = keccack256(submissionsPermalink)
 		submissionIdentifier: {
 			type: String,
 			required: true,
@@ -15,6 +16,9 @@ const SubmissionSchema = new mongoose.Schema(
 			required: true,
 		},
 		initStatus: { type: String, required: true },
+		groupAddress: {
+			type: String,
+		},
 		challengeData: {
 			type: String,
 		},

@@ -29,7 +29,7 @@ export async function submissionsProcessor() {
 async function processSubmission(submission) {
 	try {
 		// check whether submission has already been added
-		const submissionIdentifier = keccackHash(submission.url);
+		const submissionIdentifier = keccackHash(submission.permalink);
 		const submissionExists = await findSubmission(submissionIdentifier);
 		if (submissionExists != undefined) {
 			log.info(
@@ -45,7 +45,9 @@ async function processSubmission(submission) {
 		);
 
 		// reply with challenge url
-		const reply = await submission.reply("Hey, this is trial");
+		const reply = await submission.reply(
+			`Link to market - http://65.108.59.231:3000/post/${submissionIdentifier}`
+		);
 		await reply.distinguish({
 			status: true,
 			sticky: true,

@@ -17,12 +17,15 @@ import {
 } from "./db_manager";
 import { routes } from "./routes";
 
+const port = process.env.PORT || 5000;
+
 const app = express();
 app.use(cors());
 app.use(urlencoded({ extended: true }));
 app.use(json());
 
-app.use("/submissions", routes.submissions);
+app.use("/submission", routes.submission);
+
 app.get("/", async function (req, res) {
 	res.send("Ok");
 });
@@ -33,6 +36,10 @@ async function main() {
 	submissionsProcessor();
 	submissionsSweeper();
 	startEventsSubscription();
+
+	app.listen(port, () => {
+		log.info(`[main] Listening on PORT=${port}`);
+	});
 }
 
 main();
