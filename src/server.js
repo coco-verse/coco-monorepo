@@ -9,13 +9,17 @@ import cors from "cors";
 import { submissionsQueue } from "./submissions_queue";
 import { submissionsProcessor } from "./submissions_processor";
 import { connectDb } from "./models";
-import { submissionsSweeper } from "./submissions_sweeper";
+import {
+	sendRemovalPrivateMessage,
+	submissionsSweeper,
+} from "./submissions_sweeper";
 import { startEventsSubscription } from "./chain_processor";
 import {
 	updateSubmissionDetails,
 	updateSubmissionToInitialised,
 } from "./db_manager";
 import { routes } from "./routes";
+import moment from "moment";
 
 const port = process.env.PORT || 5000;
 

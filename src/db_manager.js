@@ -73,7 +73,8 @@ export async function removeFinNoOutcomeSubmissions() {
 	// 	initStatus == constants.SUBMISSION_STATUS.INITIALIZED
 	// ) {
 	// }
-	let currentTime = moment().toISOString();
+	let currentTime = new Date().toISOString();
+
 	let filter = {
 		$and: [
 			{

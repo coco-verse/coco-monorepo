@@ -6,6 +6,7 @@ import { addSubmission, findSubmission } from "./db_manager.js";
 import { keccackHash } from "./helpers.js";
 import { SubmissionSchema } from "./models/submission.js";
 import { consumeQueue } from "./submissions_queue.js";
+import { sendRemovalPrivateMessage } from "./submissions_sweeper.js";
 
 const timeoutIntervalSecs = 1;
 
@@ -32,7 +33,7 @@ async function processSubmission(submission) {
 		const submissionIdentifier = keccackHash(submission.permalink);
 		const submissionExists = await findSubmission(submissionIdentifier);
 		if (submissionExists != undefined) {
-			log.info(
+			log.debug(
 				`[processSubmission] Submission with identifier ${submissionIdentifier} exists`
 			);
 			return;

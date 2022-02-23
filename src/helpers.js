@@ -1,4 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
+import log from "loglevel";
+log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { ethers } from "ethers";
+import outdent from "outdent";
+import { reddit } from "./reddit";
+import moment from "moment";
 
 export function keccackHash(value) {
 	return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(value));
@@ -14,3 +21,48 @@ export const constants = {
 		REMOVED: "REMOVED",
 	},
 };
+
+/**
+ * This would not work since bot account
+ * isn't old enough + has really low karma
+ */
+export async function sendRemovalPrivateMessage(submissionId, reason) {
+	try {
+		let submission = await reddit.getSubmission(submissionId);
+
+		let text = outdent`
+		**Reason:**${reason}
+
+		[link to your post](${await submission.permalink})
+	`;
+
+		await reddit.composeMessage({
+			to: await submission.author.name,
+			subject: "Your post has been removed",
+			text: text,
+			fromSubreddit: await submission.subreddit,
+		});
+	} catch (e) {
+		log.error(
+			`[sendRemovalPrivateMessage] submissionId=${submissionId}; private message to author of submission failed with error=${e}`
+		);
+	}
+}
+
+export async function replyToSubmission(submissionId, text) {
+	try {
+		let submission = await reddit.getSubmission(submissionId);
+		await submission.reply(text);
+	} catch (e) {
+		log.error(
+			`[replyToSubmission] submissionId=${submissionId}; reply to submission faile with error=${e}`
+		);
+	}
+}
+
+export function timeLeftForChallenge(donBufferEndsAt) {
+	let startTime = moment();
+	let endTime = moment(donBufferEndsAt);
+	let diff = endTime.diff(startTime);
+	return moment.utc(diff).format("HH:mm:ss");
+}

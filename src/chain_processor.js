@@ -4,7 +4,8 @@ import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import { addresses, getMarketDetails, getMarketState } from "./contracts";
-import { updateSubmissionDetails } from "./db_manager";
+import { findSubmission, updateSubmissionDetails } from "./db_manager";
+import { replyToSubmission, timeLeftForChallenge } from "./helpers";
 
 const web3 = createAlchemyWeb3(process.env.ALCHEMY_WSS_URL);
 
@@ -53,6 +54,10 @@ export async function eventsProcessor(error, logValue) {
 			`[eventProcessor] "Redeemed" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
 		);
 	} else {
+		// TODO Updating submission state in mongo when
+		// final outcome is declared using setOutcome
+		// by the moderator is missing. Implement it.
+
 		log.info(
 			`[eventProcessor] "UnknownEvent" event received; logValue=${JSON.stringify(
 				logValue
@@ -61,26 +66,44 @@ export async function eventsProcessor(error, logValue) {
 		return;
 	}
 
-	// TODO
-	// 1. Send creator a message that their post has received a challenge with outcome [OUTCOME]
-	// 2. If outcome is NO then add it to removal list
-	// 3. If outcome is YES then remove it from removal list (if present) + reinstate the post if already removed
-
-	// get market details
+	// get market details form chain
+	// AND update themm in db
 	const marketState = await getMarketState(groupAddress, marketIdentifier);
-
 	const marketDetails = await getMarketDetails(
 		groupAddress,
 		marketIdentifier
 	);
-
-	const res = await updateSubmissionDetails(marketIdentifier, {
+	await updateSubmissionDetails(marketIdentifier, {
 		...marketState,
 		...marketDetails,
 	});
-	console.log("submission details updated ", res);
 
-	// check for other event identifiers
+	// Reply to submission for update.
+	// Note - update replies are only sent for
+	// MarketCreated AND Challenged.
+	if (
+		eventIdentifier == eventSignatures.MarketCreated ||
+		eventIdentifier == eventSignatures.Challenged
+	) {
+		console.log(
+			"Time left to challenge ",
+			timeLeftForChallenge(marketState.donBufferEndsAt)
+		);
+		let replyText = `Challenge Update: Temporary Outcome=${
+			marketDetails.outcome == "0" ? "NO" : "YES"
+		}; Time left to challenge:${timeLeftForChallenge(
+			marketState.donBufferEndsAt
+		)}`;
+
+		// get submission id
+		let submission = await findSubmission(marketIdentifier);
+		if (submission == undefined) {
+			log.info([
+				`[eventsProcessor] unable to find submission with submissionIdentifier=${marketIdentifier}`,
+			]);
+		}
+		await replyToSubmission(submission.submissionRedditId, replyText);
+	}
 }
 
 export function startEventsSubscription() {

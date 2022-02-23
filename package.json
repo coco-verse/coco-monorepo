@@ -24,6 +24,7 @@
 		"loglevel": "^1.8.0",
 		"moment": "^2.29.1",
 		"mongoose": "^6.2.2",
+		"outdent": "^0.8.0",
 		"snoowrap": "^1.23.0"
 	},
 	"devDependencies": {
