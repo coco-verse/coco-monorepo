@@ -1,4 +1,4 @@
-import { BigNumber } from "@ethersproject/abi/node_modules/@ethersproject/bignumber";
+import { BigNumber } from "ethers";
 import {
 	MAX_LENGTH_DESCRIPTION,
 	MAX_LENGTH_NAME,

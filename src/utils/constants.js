@@ -19,3 +19,12 @@ export const SAFE_BASE_URL = "http://18.159.101.163:8000/cgw";
 export const COLORS = {
 	PRIMARY: "#FFFFFF",
 };
+export const SUBMISSION_STATUS = {
+	UNINITIALIZED: "UNINITIALIZED",
+	INITIALIZED: "INITIALIZED",
+	// DUMPED - posts that were dumped because their creator did not put in the initial challenge
+	DUMPED: "DUMPED",
+	// REMOVED - posts that were challenged and results in final outcome 0
+	REMOVED: "REMOVED",
+	UNKNOWN: "UNKNOWN",
+};

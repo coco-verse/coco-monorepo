@@ -4,18 +4,23 @@ import { generateRequestSignatures } from "./auth";
 import { getMarketIdentifierOfPost } from ".";
 
 export const baseInstance = axios.create({
-	baseURL: (() => {
-		if (process.env.REACT_APP_VERCEL_ENV === "production") {
-			return "https://backend.cocoverse.club/";
-		} else if (process.env.REACT_APP_VERCEL_ENV === "preview") {
-			return "https://cocostaging.efprivacyscaling.org";
-		} else {
-			return "http://65.108.59.231:8080";
-		}
-	})(),
+	baseURL: "http://65.108.59.231:5000",
 	timeout: 10000,
 	headers: { "Content-Type": "application/json" },
 });
+
+export async function findSubmissionsByIdentifiers(submissionIdentifiers) {
+	try {
+		const { data } = await baseInstance.request({
+			url: "/submission/find",
+			method: "POST",
+			data: {
+				filter: { submissionIdentifier: submissionIdentifiers },
+			},
+		});
+		return data.response;
+	} catch (e) {}
+}
 
 export async function getAccountNonce(coldAddress) {
 	try {

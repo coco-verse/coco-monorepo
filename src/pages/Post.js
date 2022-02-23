@@ -48,18 +48,19 @@ import {
 	GRAPH_BUFFER_MS,
 	createSetOutcomeTx,
 	createSafeTx,
+	findSubmissionsByIdentifiers,
+	SUBMISSION_STATUS,
 } from "../utils";
-import PostDisplay from "../components/PostDisplay";
+
 import { useParams } from "react-router";
-import Loader from "../components/Loader";
 import PrimaryButton from "../components/PrimaryButton";
 import ChallengeHistoryTable from "../components/ChallengeHistoryTable";
 import { BigNumber } from "ethers";
 import { addresses } from "../contracts";
-import ApprovalInterface from "../components/ApprovalInterface";
 import TwoColTitleInfo from "../components/TwoColTitleInfo";
 import HelpBox from "../components/HelpBox";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
+import parse from "html-react-parser";
 
 function Page() {
 	const urlParams = useParams();
@@ -84,6 +85,9 @@ function Page() {
 	);
 
 	const [post, setPost] = useState(null);
+
+	const [postState, setPostState] = useState(SUBMISSION_STATUS.UNKNOWN);
+
 	// main market data
 	// contains a flag whether it is on-chain or off-chain
 	const [marketData, setMarketData] = useState(null);
@@ -146,86 +150,18 @@ function Page() {
 	// flag indicates whether post's
 	// groupAddress is managed
 	// by the user
-	const isUserAnOwner =
-		groupIds.find(
-			(id) =>
-				post != undefined &&
-				id.toLowerCase() == post.groupAddress.toLowerCase()
-		) != undefined
-			? true
-			: false;
+	// const isUserAnOwner =
+	// 	groupIds.find(
+	// 		(id) =>
+	// 			post != undefined &&
+	// 			id.toLowerCase() == post.groupAddress.toLowerCase()
+	// 	) != undefined
+	// 		? true
+	// 		: false;
+	const isUserAnOwner = false;
 
 	// loading state of contrct fn calls
 	const [contractFnCallLoading, setContractFnCallLoading] = useState(false);
-
-	useEffect(() => {
-		// check whether market exists on chain
-		if (result.data && result.data.market) {
-			// market exists on chain
-			const _marketData = formatMarketData(result.data.market, true);
-
-			setGroupAddress(_marketData.group.id);
-			setMarketIdentifier(_marketData.marketIdentifier);
-			setTemporaryOutcome(_marketData.outcome);
-			setCurrentAmountBn(_marketData.lastAmountStaked);
-
-			// set market state and, if applicable, time left for either challenge or resolution
-			let timestamp = new Date() / 1000;
-
-			if (_marketData.donBufferEndsAt - timestamp > 0) {
-				// state is in buffer period
-				setMarketState(1);
-				setTimeLeftToChallenge(_marketData.donBufferEndsAt - timestamp);
-			} else if (_marketData.resolutionBufferEndsAt - timestamp > 0) {
-				// state is in resolution period
-				setMarketState(2);
-				setTimeLeftToResolve(
-					_marketData.resolutionBufferEndsAt - timestamp
-				);
-			} else {
-				// state expired
-				setMarketState(3);
-			}
-
-			// set stakes history
-			setStakes(_marketData.stakes);
-
-			// set min amount to challenge as input amount
-			setInput(
-				formatBNToDecimal(_marketData.lastAmountStaked.mul(TWO_BN))
-			);
-
-			// set market data
-			setMarketData({
-				..._marketData,
-				onChain: true,
-			});
-		} else if (post != null) {
-			// market does not exists on chain
-			// populate challenge using creator's market data obj
-			const _marketData = formatMarketData(
-				JSON.parse(post.marketData),
-				false
-			);
-
-			setGroupAddress(_marketData.group);
-			setMarketIdentifier(_marketData.marketIdentifier);
-			setTemporaryOutcome(1);
-			setCurrentAmountBn(_marketData.amount1);
-
-			// set market state to 0
-			setMarketState(0);
-
-			// set min amount to challenge as input amount
-			setInput(formatBNToDecimal(_marketData.amount1.mul(TWO_BN)));
-
-			// set market data
-			setMarketData({
-				..._marketData,
-				onChain: false,
-			});
-		}
-	}, [result, post]);
 
 	// set user postions
 	useEffect(() => {
@@ -245,15 +181,45 @@ function Page() {
 		}
 	}, [rUserPositions]);
 
-	// get post details using postId;
-	// note: postId == marketIdentifier
+	// whenever post OR result is updated, update postState
+	useEffect(() => {
+		if (post == undefined || post.initStatus == undefined) {
+			return;
+		}
+
+		// If post.initState is either uninitialised
+		// OR dumped, then set post state and return.
+		// Note that uninitialised AND dumped posts aren't
+		// expected to have a market on-chain.
+		if (
+			post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ||
+			post.initStatus == SUBMISSION_STATUS.DUMPED
+		) {
+			setPostState(post.initStatus);
+			return;
+		}
+
+		// At this point post is expected to have a market,
+		// thus result should not be undefined
+		if (result == undefined) {
+			return;
+		}
+
+		// determine whether market is still
+		// in challenge period or final has
+		// been set
+		// TODO
+	}, [result, post]);
+
+	// get submission using submissionIdentifier (i.e. post id)
 	useEffect(async () => {
-		let res = await findPostsByMarketIdentifierArr([postId]);
-		if (res == undefined || res.posts.length == 0) {
+		let res = await findSubmissionsByIdentifiers([postId]);
+		if (res == undefined || res.submissions.length == 0) {
 			// TODO set error
 			return;
 		}
-		setPost(res.posts[0]);
+		console.log(res, " the res is here");
+		setPost(res.submissions[0]);
 	}, [postId]);
 
 	// tracks loading state of contract fn calls
@@ -375,11 +341,32 @@ function Page() {
 		);
 	}
 
+	function constructIFrame(url) {
+		return `<iframe id="reddit-embed" src="${url}?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="600" width="600" scrolling="no"></iframe>`;
+	}
+
 	return (
 		<Flex width={"100%"}>
 			<Flex width="70%" flexDirection={"column"} padding={5}>
 				{/* {loadingMarket == true ? <Loader /> : undefined} */}
-				<PostDisplay post={post} />
+				{/* <PostDisplay post={post} /> */}
+				<Flex
+					// flexDirection={"column"}
+					padding={2}
+					backgroundColor={COLORS.PRIMARY}
+					borderRadius={8}
+					marginBottom={4}
+				>
+					<Spacer>
+						{post && post.submissionPermalink != undefined
+							? parse(
+									constructIFrame(
+										`https://www.redditmedia.com${post.submissionPermalink}`
+									)
+							  )
+							: undefined}
+					</Spacer>
+				</Flex>
 				<ChallengeHistoryTable stakes={stakes} />
 			</Flex>
 			<Flex width="30%" flexDirection={"column"} paddingTop={5}>
@@ -390,7 +377,15 @@ function Page() {
 					borderRadius={8}
 					marginBottom={4}
 				>
-					{marketState < 2 ? (
+					{postState == SUBMISSION_STATUS.DUMPED ? (
+						<Text>Your post was dumped</Text>
+					) : undefined}
+					{postState == SUBMISSION_STATUS.UNINITIALIZED ? (
+						<Text>
+							Initialise your post RN before it gets dumped
+						</Text>
+					) : undefined}
+					{post.initStatus == SUBMISSION_STATUS.INITIALIZED ? (
 						<>
 							<Heading size="sm" marginBottom={2}>
 								Challenge post
@@ -583,7 +578,7 @@ function Page() {
 							/>
 						</>
 					) : undefined}
-					{marketState < 2 ? (
+					{/* {marketState < 2 ? (
 						<ApprovalInterface
 							marginTop={5}
 							tokenType={0}
@@ -604,7 +599,7 @@ function Page() {
 								});
 							}}
 						/>
-					) : undefined}
+					) : undefined} */}
 				</Flex>
 				{isUserAnOwner == true && marketState == 2 ? (
 					<Flex
@@ -683,3 +678,72 @@ function Page() {
 }
 
 export default Page;
+
+// useEffect(() => {
+// 	// check whether market exists on chain
+// 	if (result.data && result.data.market) {
+// 		// market exists on chain
+// 		const _marketData = formatMarketData(result.data.market, true);
+
+// 		setGroupAddress(_marketData.group.id);
+// 		setMarketIdentifier(_marketData.marketIdentifier);
+// 		setTemporaryOutcome(_marketData.outcome);
+// 		setCurrentAmountBn(_marketData.lastAmountStaked);
+
+// 		// set market state and, if applicable, time left for either challenge or resolution
+// 		let timestamp = new Date() / 1000;
+
+// 		if (_marketData.donBufferEndsAt - timestamp > 0) {
+// 			// state is in buffer period
+// 			setMarketState(1);
+// 			setTimeLeftToChallenge(_marketData.donBufferEndsAt - timestamp);
+// 		} else if (_marketData.resolutionBufferEndsAt - timestamp > 0) {
+// 			// state is in resolution period
+// 			setMarketState(2);
+// 			setTimeLeftToResolve(
+// 				_marketData.resolutionBufferEndsAt - timestamp
+// 			);
+// 		} else {
+// 			// state expired
+// 			setMarketState(3);
+// 		}
+
+// 		// set stakes history
+// 		setStakes(_marketData.stakes);
+
+// 		// set min amount to challenge as input amount
+// 		setInput(
+// 			formatBNToDecimal(_marketData.lastAmountStaked.mul(TWO_BN))
+// 		);
+
+// 		// set market data
+// 		setMarketData({
+// 			..._marketData,
+// 			onChain: true,
+// 		});
+// 	} else if (post != null) {
+// 		// market does not exists on chain
+// 		// populate challenge using creator's market data obj
+// 		const _marketData = formatMarketData(
+// 			JSON.parse(post.marketData),
+// 			false
+// 		);
+
+// 		setGroupAddress(_marketData.group);
+// 		setMarketIdentifier(_marketData.marketIdentifier);
+// 		setTemporaryOutcome(1);
+// 		setCurrentAmountBn(_marketData.amount1);
+
+// 		// set market state to 0
+// 		setMarketState(0);
+
+// 		// set min amount to challenge as input amount
+// 		setInput(formatBNToDecimal(_marketData.amount1.mul(TWO_BN)));
+
+// 		// set market data
+// 		setMarketData({
+// 			..._marketData,
+// 			onChain: false,
+// 		});
+// 	}
+// }, [result, post]);

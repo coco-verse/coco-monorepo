@@ -10,7 +10,6 @@ import {
 	groupContract,
 	groupProxyFactoryContract,
 } from "../utils";
-import Web3 from "web3";
 
 export function useCreateGroupWithSafe() {
 	const { state, send } = useContractFunction(
