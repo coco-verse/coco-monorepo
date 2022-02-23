@@ -22,6 +22,27 @@ export async function findSubmissionsByIdentifiers(submissionIdentifiers) {
 	} catch (e) {}
 }
 
+export async function initialiseSubmission(
+	submissionIdentifier,
+	challengeData,
+	challengeDataSignature,
+	groupAddress
+) {
+	try {
+		const { data } = await baseInstance.request({
+			url: "/submission/initialise",
+			method: "POST",
+			data: {
+				submissionIdentifier,
+				challengeData,
+				challengeDataSignature,
+				groupAddress,
+			},
+		});
+		return data.response;
+	} catch (e) {}
+}
+
 export async function getAccountNonce(coldAddress) {
 	try {
 		const { data } = await baseInstance.request({

@@ -50,6 +50,9 @@ import {
 	createSafeTx,
 	findSubmissionsByIdentifiers,
 	SUBMISSION_STATUS,
+	postSignTypedDataV4Helper,
+	CREATION_AMOUNT,
+	initialiseSubmission,
 } from "../utils";
 
 import { useParams } from "react-router";
@@ -93,11 +96,12 @@ function Page() {
 	const [marketData, setMarketData] = useState(null);
 
 	// state of the market
-	// 0 -> hasn't been created
+	// -1 -> corresponding post is either uninitialised or dumped
+	// 0 -> challengeData exists off-chain
 	// 1 -> buffer period
 	// 2 -> resolution period
 	// 3 -> expired
-	const [marketState, setMarketState] = useState(0);
+	const [marketState, setMarketState] = useState(-1);
 
 	// challenge states
 	const [groupAddress, setGroupAddress] = useState(null);
@@ -137,11 +141,15 @@ function Page() {
 
 	// check WETH balance and allowance
 	const wETHTokenBalance = useERC20TokenBalance(account, addresses.WETH);
+	// TODO Checking allowance for
+	// CREATION_AMOUNT.add(bnValue)
+	// must be replaced with allowance checking
+	// for both of them independtly.
 	const wETHTokenAllowance = useERC20TokenAllowanceWrapper(
 		addresses.WETH,
 		account,
 		addresses.GroupRouter,
-		bnValue
+		CREATION_AMOUNT.add(bnValue)
 	);
 
 	// get safes & groups managed by the user
@@ -162,6 +170,7 @@ function Page() {
 
 	// loading state of contrct fn calls
 	const [contractFnCallLoading, setContractFnCallLoading] = useState(false);
+	const [intialiseLoading, setInitialiseLoading] = useState(false);
 
 	// set user postions
 	useEffect(() => {
@@ -188,27 +197,89 @@ function Page() {
 		}
 
 		// If post.initState is either uninitialised
-		// OR dumped, then set post state and return.
+		// OR dumped, then return.
 		// Note that uninitialised AND dumped posts aren't
-		// expected to have a market on-chain.
+		// expected to have a market on-chain, neither challengeData.
 		if (
 			post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ||
 			post.initStatus == SUBMISSION_STATUS.DUMPED
 		) {
-			setPostState(post.initStatus);
 			return;
 		}
 
-		// At this point post is expected to have a market,
-		// thus result should not be undefined
-		if (result == undefined) {
-			return;
-		}
+		// At this point the post should either have
+		// off chain challenge data or
+		// a market should exist
+		if (result.data && result.data.market) {
+			// market exists on chain
+			const _marketData = formatMarketData(result.data.market, true);
 
-		// determine whether market is still
-		// in challenge period or final has
-		// been set
-		// TODO
+			setGroupAddress(_marketData.group.id);
+			setMarketIdentifier(_marketData.marketIdentifier);
+			setTemporaryOutcome(_marketData.outcome);
+			setCurrentAmountBn(_marketData.lastAmountStaked);
+
+			// set market state and, if applicable, time left for either challenge or resolution
+			let timestamp = new Date() / 1000;
+			if (_marketData.donBufferEndsAt - timestamp > 0) {
+				// state is in buffer period
+				setMarketState(1);
+				setTimeLeftToChallenge(_marketData.donBufferEndsAt - timestamp);
+			} else if (_marketData.resolutionBufferEndsAt - timestamp > 0) {
+				// state is in resolution period
+				setMarketState(2);
+				setTimeLeftToResolve(
+					_marketData.resolutionBufferEndsAt - timestamp
+				);
+			} else {
+				// state expired
+				setMarketState(3);
+			}
+
+			// set stakes history
+			setStakes(_marketData.stakes);
+
+			// set min amount to challenge as input amount
+			setInput(
+				formatBNToDecimal(_marketData.lastAmountStaked.mul(TWO_BN))
+			);
+
+			// set market data
+			setMarketData({
+				..._marketData,
+				onChain: true,
+			});
+		} else if (
+			post.challengeData != undefined &&
+			post.challengeData != "" &&
+			post.challengeDataSignature != undefined &&
+			post.challengeDataSignature != ""
+		) {
+			// market does not exists on chain
+			// populate challenge using post challenge data
+			// Note - marketIdentifer == submissionIdentifier
+			const _marketData = formatMarketData(
+				JSON.parse(post.challengeData),
+				false
+			);
+
+			setGroupAddress(_marketData.group);
+			setMarketIdentifier(_marketData.marketIdentifier);
+			setTemporaryOutcome(1);
+			setCurrentAmountBn(_marketData.amount1);
+
+			// set market state to 0
+			setMarketState(0);
+
+			// set min amount to challenge as input amount
+			setInput(formatBNToDecimal(_marketData.amount1.mul(TWO_BN)));
+
+			// set market data
+			setMarketData({
+				..._marketData,
+				onChain: false,
+			});
+		}
 	}, [result, post]);
 
 	// get submission using submissionIdentifier (i.e. post id)
@@ -345,6 +416,89 @@ function Page() {
 		return `<iframe id="reddit-embed" src="${url}?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="600" width="600" scrolling="no"></iframe>`;
 	}
 
+	async function initialiseMarket() {
+		setInitialiseLoading(true);
+
+		try {
+			// validate that necessary data is present
+			if (
+				post == undefined ||
+				post.submissionIdentifier == undefined ||
+				account == undefined ||
+				addresses.Group == undefined ||
+				addresses.Group == ""
+			) {
+				toast({
+					title: "Something went wrong!",
+					status: "error",
+					isClosable: true,
+				});
+				throw Error();
+			}
+
+			// validate that user has given
+			// sufficient token allowance to
+			// GroupRouter
+			if (wETHTokenAllowance == false) {
+				toast({
+					title:
+						"Please give WETH approval to app before proceeding!",
+					status: "error",
+					isClosable: true,
+				});
+				throw Error();
+			}
+
+			// validate user has enough balance
+			if (
+				wETHTokenBalance == undefined ||
+				wETHTokenBalance.lt(CREATION_AMOUNT.add(ONE_BN))
+			) {
+				toast({
+					title: "min. of 0.05 WETH required!",
+					status: "error",
+					isClosable: true,
+				});
+				throw Error();
+			}
+
+			// signature for on-chain market
+			const { marketData, dataToSign } = postSignTypedDataV4Helper(
+				addresses.Group,
+				post.submissionIdentifier,
+				CREATION_AMOUNT.toString(),
+				421611
+			);
+			const accounts = await window.ethereum.enable();
+			const marketSignature = await window.ethereum.request({
+				method: "eth_signTypedData_v3",
+				params: [accounts[0], dataToSign],
+			});
+
+			// initialise the submission
+			const res = await initialiseSubmission(
+				post.submissionIdentifier,
+				JSON.stringify(marketData),
+				marketSignature,
+				addresses.Group
+			);
+			if (res == undefined) {
+				toast({
+					title: "Something went wrong!",
+					status: "error",
+					isClosable: true,
+				});
+				throw Error();
+			}
+
+			// reload page
+			window.location.reload();
+		} catch (e) {
+			console.log("initialiseMarket error with - ", e);
+			setInitialiseLoading(false);
+		}
+	}
+
 	return (
 		<Flex width={"100%"}>
 			<Flex width="70%" flexDirection={"column"} padding={5}>
@@ -377,15 +531,28 @@ function Page() {
 					borderRadius={8}
 					marginBottom={4}
 				>
-					{postState == SUBMISSION_STATUS.DUMPED ? (
+					{post && post.initStatus == SUBMISSION_STATUS.DUMPED ? (
 						<Text>Your post was dumped</Text>
 					) : undefined}
-					{postState == SUBMISSION_STATUS.UNINITIALIZED ? (
-						<Text>
-							Initialise your post RN before it gets dumped
-						</Text>
+					{post &&
+					post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ? (
+						<>
+							<Text>
+								Initialise your post RN before it gets dumped
+							</Text>
+							<PrimaryButton
+								loadingText="Processing..."
+								isLoading={intialiseLoading}
+								disabled={!account || !wETHTokenAllowance}
+								onClick={initialiseMarket}
+								title="Initialise"
+								style={{
+									marginTop: 5,
+								}}
+							/>
+						</>
 					) : undefined}
-					{post.initStatus == SUBMISSION_STATUS.INITIALIZED ? (
+					{marketState == 0 || marketState == 1 ? (
 						<>
 							<Heading size="sm" marginBottom={2}>
 								Challenge post
@@ -433,14 +600,9 @@ function Page() {
 							<PrimaryButton
 								loadingText="Processing..."
 								isLoading={contractFnCallLoading}
-								disabled={
-									!isAuthenticated || !wETHTokenAllowance
-								}
+								disabled={!account || !wETHTokenAllowance}
 								onClick={() => {
-									if (
-										!isAuthenticated ||
-										!wETHTokenAllowance
-									) {
+									if (!account || !wETHTokenAllowance) {
 										return;
 									}
 
@@ -470,11 +632,12 @@ function Page() {
 									} else {
 										sendCreateAndChallenge(
 											[
+												// this is JSON.parse(post.challengeData)
 												marketData.group,
 												marketData.marketIdentifier,
 												marketData.amount1,
 											],
-											post.marketSignature,
+											post.challengeDataSignature,
 											0,
 											bnValue
 										);
@@ -557,10 +720,32 @@ function Page() {
 
 							<PrimaryButton
 								loadingText="Processing..."
-								disabled={!isAuthenticated}
+								disabled={
+									!account ||
+									calculateRedeemObj(
+										marketData,
+										account,
+										userPositions
+									).total.eq(ZERO_BN)
+								}
 								isLoading={contractFnCallLoading}
 								onClick={() => {
-									if (!isAuthenticated) {
+									console.log(
+										calculateRedeemObj(
+											marketData,
+											account,
+											userPositions
+										).total,
+										" this is why "
+									);
+									if (
+										!account ||
+										calculateRedeemObj(
+											marketData,
+											account,
+											userPositions
+										).total.eq(ZERO_BN)
+									) {
 										return;
 									}
 

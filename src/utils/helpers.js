@@ -36,6 +36,8 @@ export function formatMarketData(market, onChain) {
 	} else {
 		return {
 			...market,
+			// market.amount1 from post obj is already
+			// scaled to 1e18 and is string type.
 			amount1: BigNumber.from(market.amount1),
 		};
 	}
