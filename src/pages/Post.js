@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-
 import {
 	Text,
 	Flex,
@@ -48,28 +47,22 @@ import {
 	GRAPH_BUFFER_MS,
 	createSetOutcomeTx,
 	createSafeTx,
-	findSubmissionsByIdentifiers,
-	SUBMISSION_STATUS,
-	postSignTypedDataV4Helper,
-	CREATION_AMOUNT,
-	initialiseSubmission,
 } from "../utils";
-
+import PostDisplay from "../components/PostDisplay";
 import { useParams } from "react-router";
 import PrimaryButton from "../components/PrimaryButton";
 import ChallengeHistoryTable from "../components/ChallengeHistoryTable";
-import { BigNumber } from "ethers";
 import { addresses } from "../contracts";
+import ApprovalInterface from "../components/ApprovalInterface";
 import TwoColTitleInfo from "../components/TwoColTitleInfo";
 import HelpBox from "../components/HelpBox";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import parse from "html-react-parser";
 
 function Page() {
 	const urlParams = useParams();
-
-	// postId == reddit submission id
 	const postId = urlParams.postId ? urlParams.postId : undefined;
+	// const postId =
+	// 	"0xd8f23d7fd4c7fd7e97ddfb9a846f7ad112f37b7478ca26685dcefc2f9acf01e4";
 
 	const { account, chainId } = useEthers();
 
@@ -86,20 +79,16 @@ function Page() {
 	);
 
 	const [post, setPost] = useState(null);
-
-	const [postState, setPostState] = useState(SUBMISSION_STATUS.UNKNOWN);
-
 	// main market data
 	// contains a flag whether it is on-chain or off-chain
 	const [marketData, setMarketData] = useState(null);
 
 	// state of the market
-	// -1 -> corresponding post is either uninitialised or dumped
-	// 0 -> challengeData exists off-chain
+	// 0 -> hasn't been created
 	// 1 -> buffer period
 	// 2 -> resolution period
 	// 3 -> expired
-	const [marketState, setMarketState] = useState(-1);
+	const [marketState, setMarketState] = useState(0);
 
 	// challenge states
 	const [groupAddress, setGroupAddress] = useState(null);
@@ -139,15 +128,11 @@ function Page() {
 
 	// check WETH balance and allowance
 	const wETHTokenBalance = useERC20TokenBalance(account, addresses.WETH);
-	// TODO Checking allowance for
-	// CREATION_AMOUNT.add(bnValue)
-	// must be replaced with allowance checking
-	// for both of them independtly.
 	const wETHTokenAllowance = useERC20TokenAllowanceWrapper(
 		addresses.WETH,
 		account,
 		addresses.GroupRouter,
-		CREATION_AMOUNT.add(bnValue)
+		bnValue
 	);
 
 	// get safes & groups managed by the user
@@ -156,58 +141,20 @@ function Page() {
 	// flag indicates whether post's
 	// groupAddress is managed
 	// by the user
-	// const isUserAnOwner =
-	// 	groupIds.find(
-	// 		(id) =>
-	// 			post != undefined &&
-	// 			id.toLowerCase() == post.groupAddress.toLowerCase()
-	// 	) != undefined
-	// 		? true
-	// 		: false;
-	const isUserAnOwner = false;
+	const isUserAnOwner =
+		groupIds.find(
+			(id) =>
+				post != undefined &&
+				id.toLowerCase() == post.groupAddress.toLowerCase()
+		) != undefined
+			? true
+			: false;
 
 	// loading state of contrct fn calls
 	const [contractFnCallLoading, setContractFnCallLoading] = useState(false);
-	const [intialiseLoading, setInitialiseLoading] = useState(false);
 
-	// set user postions
 	useEffect(() => {
-		if (
-			rUserPositions.data &&
-			rUserPositions.data.userPositions.length != 0
-		) {
-			setUserPositions({
-				...rUserPositions.data.userPositions[0],
-				amount0: parseDecimalToBN(
-					rUserPositions.data.userPositions[0].amount0
-				),
-				amount1: parseDecimalToBN(
-					rUserPositions.data.userPositions[0].amount1
-				),
-			});
-		}
-	}, [rUserPositions]);
-
-	// whenever post OR result is updated, update postState
-	useEffect(() => {
-		if (post == undefined || post.initStatus == undefined) {
-			return;
-		}
-
-		// If post.initState is either uninitialised
-		// OR dumped, then return.
-		// Note that uninitialised AND dumped posts aren't
-		// expected to have a market on-chain, neither challengeData.
-		if (
-			post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ||
-			post.initStatus == SUBMISSION_STATUS.DUMPED
-		) {
-			return;
-		}
-
-		// At this point the post should either have
-		// off chain challenge data or
-		// a market should exist
+		// check whether market exists on chain
 		if (result.data && result.data.market) {
 			// market exists on chain
 			const _marketData = formatMarketData(result.data.market, true);
@@ -219,6 +166,7 @@ function Page() {
 
 			// set market state and, if applicable, time left for either challenge or resolution
 			let timestamp = new Date() / 1000;
+
 			if (_marketData.donBufferEndsAt - timestamp > 0) {
 				// state is in buffer period
 				setMarketState(1);
@@ -247,17 +195,11 @@ function Page() {
 				..._marketData,
 				onChain: true,
 			});
-		} else if (
-			post.challengeData != undefined &&
-			post.challengeData != "" &&
-			post.challengeDataSignature != undefined &&
-			post.challengeDataSignature != ""
-		) {
+		} else if (post != null) {
 			// market does not exists on chain
-			// populate challenge using post challenge data
-			// Note - marketIdentifer == submissionIdentifier
+			// populate challenge using creator's market data obj
 			const _marketData = formatMarketData(
-				JSON.parse(post.challengeData),
+				JSON.parse(post.marketData),
 				false
 			);
 
@@ -280,15 +222,33 @@ function Page() {
 		}
 	}, [result, post]);
 
-	// get submission using submissionIdentifier (i.e. post id)
+	// set user postions
+	useEffect(() => {
+		if (
+			rUserPositions.data &&
+			rUserPositions.data.userPositions.length != 0
+		) {
+			setUserPositions({
+				...rUserPositions.data.userPositions[0],
+				amount0: parseDecimalToBN(
+					rUserPositions.data.userPositions[0].amount0
+				),
+				amount1: parseDecimalToBN(
+					rUserPositions.data.userPositions[0].amount1
+				),
+			});
+		}
+	}, [rUserPositions]);
+
+	// get post details using postId;
+	// note: postId == marketIdentifier
 	useEffect(async () => {
-		let res = await findSubmissionsByIdentifiers([postId]);
-		if (res == undefined || res.submissions.length == 0) {
+		let res = await findPostsByMarketIdentifierArr([postId]);
+		if (res == undefined || res.posts.length == 0) {
 			// TODO set error
 			return;
 		}
-		console.log(res, " the res is here");
-		setPost(res.submissions[0]);
+		setPost(res.posts[0]);
 	}, [postId]);
 
 	// tracks loading state of contract fn calls
@@ -410,115 +370,11 @@ function Page() {
 		);
 	}
 
-	function constructIFrame(url) {
-		return `<iframe id="reddit-embed" src="${url}?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="600" width="600" scrolling="no"></iframe>`;
-	}
-
-	async function initialiseMarket() {
-		setInitialiseLoading(true);
-
-		try {
-			// validate that necessary data is present
-			if (
-				post == undefined ||
-				post.submissionIdentifier == undefined ||
-				account == undefined ||
-				addresses.Group == undefined ||
-				addresses.Group == ""
-			) {
-				toast({
-					title: "Something went wrong!",
-					status: "error",
-					isClosable: true,
-				});
-				throw Error();
-			}
-
-			// validate that user has given
-			// sufficient token allowance to
-			// GroupRouter
-			if (wETHTokenAllowance == false) {
-				toast({
-					title:
-						"Please give WETH approval to app before proceeding!",
-					status: "error",
-					isClosable: true,
-				});
-				throw Error();
-			}
-
-			// validate user has enough balance
-			if (
-				wETHTokenBalance == undefined ||
-				wETHTokenBalance.lt(CREATION_AMOUNT.add(ONE_BN))
-			) {
-				toast({
-					title: "min. of 0.05 WETH required!",
-					status: "error",
-					isClosable: true,
-				});
-				throw Error();
-			}
-
-			// signature for on-chain market
-			const { marketData, dataToSign } = postSignTypedDataV4Helper(
-				addresses.Group,
-				post.submissionIdentifier,
-				CREATION_AMOUNT.toString(),
-				421611
-			);
-			const accounts = await window.ethereum.enable();
-			const marketSignature = await window.ethereum.request({
-				method: "eth_signTypedData_v3",
-				params: [accounts[0], dataToSign],
-			});
-
-			// initialise the submission
-			const res = await initialiseSubmission(
-				post.submissionIdentifier,
-				JSON.stringify(marketData),
-				marketSignature,
-				addresses.Group
-			);
-			if (res == undefined) {
-				toast({
-					title: "Something went wrong!",
-					status: "error",
-					isClosable: true,
-				});
-				throw Error();
-			}
-
-			// reload page
-			window.location.reload();
-		} catch (e) {
-			console.log("initialiseMarket error with - ", e);
-			setInitialiseLoading(false);
-		}
-	}
-
 	return (
 		<Flex width={"100%"}>
 			<Flex width="70%" flexDirection={"column"} padding={5}>
 				{/* {loadingMarket == true ? <Loader /> : undefined} */}
-				{/* <PostDisplay post={post} /> */}
-				<Flex
-					// flexDirection={"column"}
-					padding={2}
-					backgroundColor={COLORS.PRIMARY}
-					borderRadius={8}
-					marginBottom={4}
-				>
-					<Spacer>
-						{post && post.submissionPermalink != undefined
-							? parse(
-									constructIFrame(
-										`https://www.redditmedia.com${post.submissionPermalink}`
-									)
-							  )
-							: undefined}
-					</Spacer>
-				</Flex>
+				<PostDisplay post={post} />
 				<ChallengeHistoryTable stakes={stakes} />
 			</Flex>
 			<Flex width="30%" flexDirection={"column"} paddingTop={5}>
@@ -529,28 +385,7 @@ function Page() {
 					borderRadius={8}
 					marginBottom={4}
 				>
-					{post && post.initStatus == SUBMISSION_STATUS.DUMPED ? (
-						<Text>Your post was dumped</Text>
-					) : undefined}
-					{post &&
-					post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ? (
-						<>
-							<Text>
-								Initialise your post RN before it gets dumped
-							</Text>
-							<PrimaryButton
-								loadingText="Processing..."
-								isLoading={intialiseLoading}
-								disabled={!account || !wETHTokenAllowance}
-								onClick={initialiseMarket}
-								title="Initialise"
-								style={{
-									marginTop: 5,
-								}}
-							/>
-						</>
-					) : undefined}
-					{marketState == 0 || marketState == 1 ? (
+					{marketState < 2 ? (
 						<>
 							<Heading size="sm" marginBottom={2}>
 								Challenge post
@@ -630,12 +465,11 @@ function Page() {
 									} else {
 										sendCreateAndChallenge(
 											[
-												// this is JSON.parse(post.challengeData)
 												marketData.group,
 												marketData.marketIdentifier,
 												marketData.amount1,
 											],
-											post.challengeDataSignature,
+											post.marketSignature,
 											0,
 											bnValue
 										);
@@ -728,14 +562,6 @@ function Page() {
 								}
 								isLoading={contractFnCallLoading}
 								onClick={() => {
-									console.log(
-										calculateRedeemObj(
-											marketData,
-											account,
-											userPositions
-										).total,
-										" this is why "
-									);
 									if (
 										!account ||
 										calculateRedeemObj(
@@ -761,29 +587,28 @@ function Page() {
 							/>
 						</>
 					) : undefined}
-					{/* {marketState < 2 ? (
-						<ApprovalInterface
-							marginTop={5}
-							tokenType={0}
-							erc20Address={addresses.WETH}
-							erc20AmountBn={bnValue}
-							onSuccess={() => {
-								toast({
-									title: "Success!",
-									status: "success",
-									isClosable: true,
-								});
-							}}
-							onFail={() => {
-								toast({
-									title: "Metamask err!",
-									status: "error",
-									isClosable: true,
-								});
-							}}
-						/>
-					) : undefined} */}
 				</Flex>
+				{marketState < 2 ? (
+					<ApprovalInterface
+						tokenType={0}
+						erc20Address={addresses.WETH}
+						erc20AmountBn={bnValue}
+						onSuccess={() => {
+							toast({
+								title: "Success!",
+								status: "success",
+								isClosable: true,
+							});
+						}}
+						onFail={() => {
+							toast({
+								title: "Metamask err!",
+								status: "error",
+								isClosable: true,
+							});
+						}}
+					/>
+				) : undefined}
 				{isUserAnOwner == true && marketState == 2 ? (
 					<Flex
 						flexDirection={"column"}
@@ -844,15 +669,15 @@ function Page() {
 				<HelpBox
 					heading={"Challenge Rules"}
 					pointsArr={[
-						"1. You can challenge that post is (i.e. YES) / isn't (i.e. NO) suitable for group's feed.",
+						"1. You can challenge that post is (i.e. YES) OR isn't (i.e. NO) suitable for group's feed.",
 						"2. Temporary outcome is current view on the post. If you disagree, you can challenge it.",
-						"3. To challenge you have to put up 2x the amount (i.e Min. Amount to Challenge) put up for last challenge.",
-						"4. Every post starts with creator putting up some amount for YES, so others can challenge them.",
+						"3. To challenge you have to put in 2x the amount (i.e Min. Amount to Challenge) put in for last challenge.",
+						"4. Every post starts with creator putting in some amount for YES, so others can challenge them.",
 						`6. If temporary outcome isn't challenged before challenge period expires (i.e. Time left to challenge), it is set as the final outcome.`,
 						"7. Every successful challenge renews challenge period.",
 						"8. The last challenger (i.e. last one to challenge in favour of final outcome) gets their amount back + win entire amount challenged against them.",
 						"9. If you challenged in favour of final outcome you get your amount back.",
-						"10. If total amount put up for challenge reaches certain volume (i.e. Max. Challenge limit), challenging stops & moderators declare the final outcome.",
+						"10. If total amount put in for challenge reaches certain volume (i.e. Max. Challenge limit), challenging stops & moderators declare the final outcome.",
 					]}
 				/>
 			</Flex>
@@ -861,72 +686,3 @@ function Page() {
 }
 
 export default Page;
-
-// useEffect(() => {
-// 	// check whether market exists on chain
-// 	if (result.data && result.data.market) {
-// 		// market exists on chain
-// 		const _marketData = formatMarketData(result.data.market, true);
-
-// 		setGroupAddress(_marketData.group.id);
-// 		setMarketIdentifier(_marketData.marketIdentifier);
-// 		setTemporaryOutcome(_marketData.outcome);
-// 		setCurrentAmountBn(_marketData.lastAmountStaked);
-
-// 		// set market state and, if applicable, time left for either challenge or resolution
-// 		let timestamp = new Date() / 1000;
-
-// 		if (_marketData.donBufferEndsAt - timestamp > 0) {
-// 			// state is in buffer period
-// 			setMarketState(1);
-// 			setTimeLeftToChallenge(_marketData.donBufferEndsAt - timestamp);
-// 		} else if (_marketData.resolutionBufferEndsAt - timestamp > 0) {
-// 			// state is in resolution period
-// 			setMarketState(2);
-// 			setTimeLeftToResolve(
-// 				_marketData.resolutionBufferEndsAt - timestamp
-// 			);
-// 		} else {
-// 			// state expired
-// 			setMarketState(3);
-// 		}
-
-// 		// set stakes history
-// 		setStakes(_marketData.stakes);
-
-// 		// set min amount to challenge as input amount
-// 		setInput(
-// 			formatBNToDecimal(_marketData.lastAmountStaked.mul(TWO_BN))
-// 		);
-
-// 		// set market data
-// 		setMarketData({
-// 			..._marketData,
-// 			onChain: true,
-// 		});
-// 	} else if (post != null) {
-// 		// market does not exists on chain
-// 		// populate challenge using creator's market data obj
-// 		const _marketData = formatMarketData(
-// 			JSON.parse(post.marketData),
-// 			false
-// 		);
-
-// 		setGroupAddress(_marketData.group);
-// 		setMarketIdentifier(_marketData.marketIdentifier);
-// 		setTemporaryOutcome(1);
-// 		setCurrentAmountBn(_marketData.amount1);
-
-// 		// set market state to 0
-// 		setMarketState(0);
-
-// 		// set min amount to challenge as input amount
-// 		setInput(formatBNToDecimal(_marketData.amount1.mul(TWO_BN)));
-
-// 		// set market data
-// 		setMarketData({
-// 			..._marketData,
-// 			onChain: false,
-// 		});
-// 	}
-// }, [result, post]);

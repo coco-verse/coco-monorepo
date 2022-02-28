@@ -83,6 +83,7 @@ function App() {
 					<Routes>
 						<Route path="/" element={<></>} />
 						<Route path="/post/:postId" element={<Post />} />
+						<Route path="/new/:url" element={<NewPost />} />
 						<Route path="/new" element={<NewPost />} />
 					</Routes>
 				</Flex>

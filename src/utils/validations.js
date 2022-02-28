@@ -198,10 +198,11 @@ export function validateLinkURL(val) {
 		};
 	}
 
-	if (val == "" || val.length > MAX_LENGTH_LINK) {
+	let reg = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+	if (!reg.test(val) || val.length > MAX_LENGTH_LINK) {
 		return {
 			valid: false,
-			expText: "Invalid link",
+			expText: "Invalid link. Make sure to start your link with http(s)",
 		};
 	}
 
