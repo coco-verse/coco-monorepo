@@ -5,6 +5,7 @@ import {
 	MAX_LENGTH_TITLE,
 	MAX_LENGTH_LINK,
 	ZERO_BN,
+	MAX_LENGTH_AUTHOR,
 } from ".";
 
 export function validateIsNumber(val) {
@@ -158,6 +159,28 @@ export function validatePostTitle(val) {
 		return {
 			valid: false,
 			expText: "Title cannot be greater than 250 characters in length",
+		};
+	}
+
+	return {
+		valid: true,
+		expTex: "",
+	};
+}
+
+export function validatePostAuthor(val) {
+	if (typeof val != "string") {
+		return {
+			valid: false,
+			expText: "Invalid Input!",
+		};
+	}
+
+	if (val.length > MAX_LENGTH_AUTHOR) {
+		return {
+			valid: false,
+			expText:
+				"Author name cannot be greater than 250 characters in length",
 		};
 	}
 

@@ -29,6 +29,7 @@ import Post from "./pages/Post";
 import MainMenu from "./components/MainMenu";
 import ConnectButton from "./components/ConnectButton";
 import LoginModal from "./components/LoginModal";
+import NewPost from "./pages/NewPost";
 
 function App() {
 	const navigate = useNavigate();
@@ -82,6 +83,7 @@ function App() {
 					<Routes>
 						<Route path="/" element={<></>} />
 						<Route path="/post/:postId" element={<Post />} />
+						<Route path="/new" element={<NewPost />} />
 					</Routes>
 				</Flex>
 				<Spacer />

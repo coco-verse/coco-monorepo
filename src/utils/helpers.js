@@ -551,10 +551,8 @@ export function minAmountAfterSlippageBn(bnAmount, slippagePercentage) {
 	return minValueBn;
 }
 
-export function getMarketIdentifierOfPost(postBodyObj) {
-	return etherUtils.keccak256(
-		etherUtils.toUtf8Bytes(JSON.stringify(postBodyObj))
-	);
+export function getMarketIdentifierOfUrl(url) {
+	return etherUtils.keccak256(etherUtils.toUtf8Bytes(url));
 }
 
 export function postSignTypedDataV4Helper(

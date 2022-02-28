@@ -4,9 +4,12 @@ import { generateRequestSignatures } from "./auth";
 import { getMarketIdentifierOfPost } from ".";
 
 export const baseInstance = axios.create({
-	baseURL: "http://65.108.59.231:5000",
+	baseURL: "http://65.108.59.231:8000",
 	timeout: 10000,
-	headers: { "Content-Type": "application/json" },
+	headers: {
+		"Content-Type": "application/json",
+		"Access-Control-Allow-Origin": "*",
+	},
 });
 
 export async function findSubmissionsByIdentifiers(submissionIdentifiers) {
@@ -97,33 +100,13 @@ export async function loginUser(keySignature, hotAddress, accountNonce) {
 	}
 }
 
-export async function newPost(
-	groupAddress,
-	marketIdentifier,
-	body,
-	marketSignature,
-	marketData
-) {
-	const msg = {
-		groupAddress,
-		marketIdentifier,
-		body,
-		marketSignature,
-		marketData,
-	};
-	const signatures = generateRequestSignatures(msg);
-
-	if (!signatures) {
-		return;
-	}
-
+export async function newPost(bodyObj) {
 	try {
 		const { data } = await baseInstance.request({
 			url: "/post/new",
 			method: "POST",
 			data: {
-				signatures,
-				msg,
+				...bodyObj,
 			},
 		});
 

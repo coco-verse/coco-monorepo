@@ -73,8 +73,6 @@ function Page() {
 
 	const { account, chainId } = useEthers();
 
-	const isAuthenticated = account ? true : false;
-
 	const toast = useToast();
 
 	// CA - You might need to trigger this
@@ -363,7 +361,7 @@ function Page() {
 
 	async function setOutcomeHelper() {
 		// throw if user isn't authenticated
-		if (!isAuthenticated || isUserAnOwner == false) {
+		if (!account || isUserAnOwner == false) {
 			toast({
 				title: "Invalid request!",
 				status: "error",
