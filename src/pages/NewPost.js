@@ -15,13 +15,6 @@ import {
 import {
 	keccak256,
 	newPost,
-	getPresignedUrl,
-	validateCreationAmount,
-	useBNInput,
-	CURR_SYMBOL,
-	uploadImageFile,
-	GRAPH_BUFFER_MS,
-	findGroups,
 	CREATION_AMOUNT,
 	postSignTypedDataV4Helper,
 	TWO_BN,
