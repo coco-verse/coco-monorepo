@@ -1,4 +1,3 @@
-import { useDispatch, useSelector } from "react-redux";
 import {
 	Text,
 	Flex,
@@ -57,6 +56,7 @@ import ApprovalInterface from "../components/ApprovalInterface";
 import TwoColTitleInfo from "../components/TwoColTitleInfo";
 import HelpBox from "../components/HelpBox";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
+import MetadataDisplay from "../components/MetadataDisplay";
 
 function Page() {
 	const urlParams = useParams();
@@ -78,6 +78,7 @@ function Page() {
 		false
 	);
 
+	const [linkMetadata, setLinkMetadata] = useState(null);
 	const [post, setPost] = useState(null);
 	// main market data
 	// contains a flag whether it is on-chain or off-chain
@@ -248,7 +249,9 @@ function Page() {
 			// TODO set error
 			return;
 		}
-		setPost(res.posts[0]);
+		console.log(res.posts[0]);
+		setPost(res.posts[0].post);
+		setLinkMetadata(res.posts[0].metadata);
 	}, [postId]);
 
 	// tracks loading state of contract fn calls
@@ -374,7 +377,21 @@ function Page() {
 		<Flex width={"100%"}>
 			<Flex width="70%" flexDirection={"column"} padding={5}>
 				{/* {loadingMarket == true ? <Loader /> : undefined} */}
-				<PostDisplay post={post} />
+				{/* <PostDisplay post={post} /> */}
+				{post != undefined ? (
+					<Flex
+						flexDirection={"column"}
+						padding={2}
+						backgroundColor={COLORS.PRIMARY}
+						borderRadius={8}
+						marginBottom={4}
+					>
+						<MetadataDisplay
+							metadata={linkMetadata}
+							url={post.url}
+						/>
+					</Flex>
+				) : undefined}
 				<ChallengeHistoryTable stakes={stakes} />
 			</Flex>
 			<Flex width="30%" flexDirection={"column"} paddingTop={5}>
@@ -388,7 +405,7 @@ function Page() {
 					{marketState < 2 ? (
 						<>
 							<Heading size="sm" marginBottom={2}>
-								Challenge post
+								Challenge Link
 							</Heading>
 							<TwoColTitleInfo
 								title={"Temporary outcome:"}
@@ -487,7 +504,7 @@ function Page() {
 					{marketState == 2 ? (
 						<>
 							<Heading size="sm" marginBottom={2}>
-								Post is under review
+								Link is under review
 							</Heading>
 							<TwoColTitleInfo
 								title={"Time left for review:"}

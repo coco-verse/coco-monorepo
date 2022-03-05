@@ -12,6 +12,19 @@ export const baseInstance = axios.create({
 	},
 });
 
+export async function findUrlsInfo(urls) {
+	try {
+		const { data } = await baseInstance.request({
+			url: "/post/findUrlsInfo",
+			method: "POST",
+			data: {
+				urls,
+			},
+		});
+		return data.response;
+	} catch (e) {}
+}
+
 export async function findSubmissionsByIdentifiers(submissionIdentifiers) {
 	try {
 		const { data } = await baseInstance.request({

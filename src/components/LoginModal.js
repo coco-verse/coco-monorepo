@@ -26,24 +26,23 @@ function LoginModal() {
 	const dispatch = useDispatch();
 
 	const isOpen = useSelector(selectLoginModalState).isOpen;
-	const { activateBrowserWallet, account, chainId } = useEthers();
-	console.log(chainId, " this is the chain id");
-	// const [chainId, setChainId] = useState(null);
+	const { activateBrowserWallet, account } = useEthers();
+	const [chainId, setChainId] = useState(null);
 
-	// useEffect(async () => {
-	// 	if (window.ethereum) {
-	// 		// get chainId for the first time
-	// 		const id = await window.ethereum.request({
-	// 			method: "eth_chainId",
-	// 		});
-	// 		setChainId(parseInt(id, 16));
+	useEffect(async () => {
+		if (window.ethereum) {
+			// get chainId for the first time
+			const id = await window.ethereum.request({
+				method: "eth_chainId",
+			});
+			setChainId(parseInt(id, 16));
 
-	// 		// attach listener that updates chainId whenever it changes
-	// 		window.ethereum.on("chainChanged", (id) => {
-	// 			setChainId(parseInt(id, 16));
-	// 		});
-	// 	}
-	// }, [window.ethereum]);
+			// attach listener that updates chainId whenever it changes
+			window.ethereum.on("chainChanged", (id) => {
+				setChainId(parseInt(id, 16));
+			});
+		}
+	}, [window.ethereum]);
 
 	return (
 		<Modal

@@ -29,3 +29,8 @@ export const SUBMISSION_STATUS = {
 	REMOVED: "REMOVED",
 	UNKNOWN: "UNKNOWN",
 };
+
+export const QUERY_STATUS = {
+	FOUND: "FOUND",
+	NOT_FOUND: "NOT_FOUND",
+};

@@ -15,7 +15,7 @@ function ConnectButton() {
 
 	const { account } = useEthers();
 	const tokenBalance = useERC20TokenBalance(account, addresses.WETH);
-
+	console.log(account, " jk");
 	return (
 		<Flex m={2}>
 			<Box
@@ -34,7 +34,7 @@ function ConnectButton() {
 				) : undefined}
 				<PrimaryButton
 					onClick={() => {
-						if (account == undefined) {
+						if (account != undefined) {
 							return;
 						}
 						dispatch(sUpdateLoginModalIsOpen(true));

@@ -673,3 +673,37 @@ export function determineMarketState(market) {
 		return 3;
 	}
 }
+
+// Priority for metadata is given in following order:
+// Twitter -> Open Graph -> Normal
+export function formatMetadata(metadata) {
+	let final = {};
+
+	if (metadata.twitterTitle != undefined) {
+		final.title = metadata.twitterTitle;
+	} else if (metadata.ogTitle != undefined) {
+		final.title = metadata.ogTitle;
+	}
+
+	if (metadata.twitterDescription != undefined) {
+		final.description = metadata.twitterDescription;
+	} else if (metadata.ogDescription != undefined) {
+		final.description = metadata.ogDescription;
+	}
+
+	if (metadata.twitterImage != undefined) {
+		final.imageUrl = metadata.twitterImage.url;
+	} else if (metadata.ogImage != undefined) {
+		final.imageUrl = metadata.ogImage.url;
+	}
+
+	final.url = metadata.ogUrl ? metadata.ogUrl : metadata.requestUrl;
+
+	return final;
+}
+
+export function findUrlName(url) {
+	let tmp = document.createElement("a");
+	tmp.setAttribute("href", url);
+	return tmp.hostname;
+}

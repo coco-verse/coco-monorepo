@@ -43,15 +43,9 @@ function MainMenu() {
 			<MenuList backgroundColor="#0B0B0B">
 				<Item
 					onClick={() => {
-						navigate("/challenged");
+						navigate("/");
 					}}
-					title={"Challenged Posts"}
-				/>
-				<Item
-					onClick={() => {
-						navigate("/activity");
-					}}
-					title={"Your activity"}
+					title={"Home"}
 				/>
 			</MenuList>
 		</Menu>

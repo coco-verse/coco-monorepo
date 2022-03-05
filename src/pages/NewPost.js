@@ -22,8 +22,11 @@ import {
 	COLORS,
 	validatePostTitle,
 	validateLinkURL,
-	validatePostAuthor,
 	getMarketIdentifierOfUrl,
+	findUrlsInfo,
+	formatMetadata,
+	findUrlName,
+	QUERY_STATUS,
 } from "./../utils";
 import {
 	useERC20TokenAllowanceWrapper,
@@ -37,6 +40,7 @@ import { addresses } from "../contracts";
 import HelpBox from "../components/HelpBox";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { useNavigate, useParams } from "react-router";
+import MetadataDisplay from "../components/MetadataDisplay";
 
 function Page() {
 	const urlParams = useParams();
@@ -53,12 +57,12 @@ function Page() {
 		CREATION_AMOUNT.add(ONE_BN)
 	);
 
-	const [title, setTitle] = useState("");
-	const [author, setAuthor] = useState("");
 	const [link, setLink] = useState(
 		urlParams.url ? decodeURIComponent(urlParams.url) : ""
 	);
+	const [urlInfo, setUrlInfo] = useState(undefined);
 
+	const [loadingMetadata, setLoadingMetadata] = useState(false);
 	const [newPostLoading, setNewPostLoading] = useState(false);
 
 	async function postHelper() {
@@ -76,13 +80,11 @@ function Page() {
 			// start new post loading
 			setNewPostLoading(true);
 
-			// validate title AND author
+			// validate title
 			if (
 				!addresses.Group ||
 				addresses.Group == "" ||
-				validatePostTitle(title).valid == false ||
-				validatePostAuthor(author).valid == false ||
-				validateLinkURL(link).valid == false
+				urlInfo == undefined
 			) {
 				toast({
 					title: "Invalid Input!",
@@ -114,7 +116,7 @@ function Page() {
 				throw Error();
 			}
 
-			const marketIdentifier = getMarketIdentifierOfUrl(link);
+			const marketIdentifier = getMarketIdentifierOfUrl(urlInfo.url);
 
 			// signature for on-chain market
 			const { marketData, dataToSign } = postSignTypedDataV4Helper(
@@ -132,12 +134,7 @@ function Page() {
 			// create new post request body
 			let body = {
 				creatorAddress: account.toLowerCase(),
-				url: link,
-				urlMetadata: JSON.stringify({
-					url: link,
-					title: title,
-					author: author,
-				}),
+				url: urlInfo.url,
 				groupAddress: addresses.Group.toLowerCase(),
 				marketSignature,
 				marketData: JSON.stringify(marketData),
@@ -163,6 +160,24 @@ function Page() {
 		}
 	}
 
+	async function getLinkMetadata() {
+		if (validateLinkURL(link).valid == false) {
+			return;
+		}
+
+		setLoadingMetadata(true);
+
+		const res = await findUrlsInfo([link]);
+		console.log(res);
+		if (res == undefined || res.urlsInfo.length == 0) {
+			return;
+		}
+
+		setUrlInfo(res.urlsInfo[0]);
+
+		setLoadingMetadata(false);
+	}
+
 	return (
 		<Flex width={"100%"}>
 			<Flex width={"70%"} padding={5} flexDirection={"column"}>
@@ -173,36 +188,17 @@ function Page() {
 					justifyContent="flex-start"
 					marginBottom={4}
 				>
-					<Heading size="md">Add your link</Heading>
+					<Heading size="md">Add new link</Heading>
 				</Flex>
 				<Flex
 					padding={2}
 					backgroundColor={COLORS.PRIMARY}
 					borderRadius={8}
 					flexDirection={"column"}
+					marginBottom={4}
 				>
 					{InputWithTitle(
-						"Title",
-						0,
-						title,
-						title,
-						setTitle,
-						validatePostTitle,
-						{}
-					)}
-
-					{InputWithTitle(
-						"Author",
-						0,
-						author,
-						author,
-						setAuthor,
-						validatePostAuthor,
-						{}
-					)}
-
-					{InputWithTitle(
-						"Link URL",
+						"Link",
 						0,
 						link,
 						link,
@@ -210,21 +206,75 @@ function Page() {
 						validateLinkURL,
 						{}
 					)}
-					<Link fontSize={12} href={link} isExternal>
-						{"Visit link"}
-						<ExternalLinkIcon mx="2px" />
-					</Link>
 
 					<PrimaryButton
-						title={"Post"}
-						isLoading={newPostLoading}
-						loadingText="Processing..."
-						onClick={postHelper}
+						title={"Find Link"}
+						isLoading={loadingMetadata}
+						loadingText="Finding..."
+						onClick={getLinkMetadata}
 						style={{
-							marginTop: 20,
-							flexDirection: "row",
+							marginTop: 5,
+							// flexDirection: "row",
 						}}
 					/>
+				</Flex>
+				<Flex
+					padding={2}
+					backgroundColor={COLORS.PRIMARY}
+					borderRadius={8}
+					flexDirection={"column"}
+				>
+					{urlInfo == undefined ? (
+						<Text>Nothing found...</Text>
+					) : undefined}
+					{urlInfo != undefined ? (
+						<>
+							<MetadataDisplay
+								metadata={urlInfo.metadata}
+								url={urlInfo.url}
+							/>
+							{urlInfo.qStatus == QUERY_STATUS.FOUND ? (
+								<Flex
+									justifyContent="center"
+									paddingTop={5}
+									alignItems="center"
+								>
+									<Text
+										marginRight={1}
+										color="#337DCF"
+										fontSize={15}
+										onClick={() => {
+											window.open(
+												`/post/${urlInfo.post.marketIdentifier}`
+											);
+										}}
+										_hover={{
+											cursor: "pointer",
+											textDecoration: "underline",
+										}}
+									>
+										Link already added. Vist on COCO
+									</Text>
+									<ExternalLinkIcon
+										marginLeft={1}
+										height={18}
+										color="#337DCF"
+									/>
+								</Flex>
+							) : undefined}
+							{urlInfo.qStatus == QUERY_STATUS.NOT_FOUND ? (
+								<PrimaryButton
+									title={"Add link"}
+									isLoading={newPostLoading}
+									loadingText="Adding..."
+									onClick={postHelper}
+									style={{
+										marginTop: 5,
+									}}
+								/>
+							) : undefined}
+						</>
+					) : undefined}
 					<ApprovalInterface
 						marginTop={5}
 						tokenType={0}

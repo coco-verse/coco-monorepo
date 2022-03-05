@@ -30,6 +30,7 @@ import MainMenu from "./components/MainMenu";
 import ConnectButton from "./components/ConnectButton";
 import LoginModal from "./components/LoginModal";
 import NewPost from "./pages/NewPost";
+import Feed from "./pages/Feed";
 
 function App() {
 	const navigate = useNavigate();
@@ -81,9 +82,10 @@ function App() {
 				<Spacer />
 				<Flex width={"70%"}>
 					<Routes>
-						<Route path="/" element={<></>} />
+						<Route path="/" element={<Feed />} />
 						<Route path="/post/:postId" element={<Post />} />
 						<Route path="/new/:url" element={<NewPost />} />
+						<Route path="/new/:url/:title" element={<NewPost />} />
 						<Route path="/new" element={<NewPost />} />
 					</Routes>
 				</Flex>
