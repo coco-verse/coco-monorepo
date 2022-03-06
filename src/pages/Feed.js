@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { resolvePath, useLocation, useNavigate, useParams } from "react-router";
 
 import WETHSwapper from "../components/WETHSwapper";
+import MetadataDisplay from "../components/MetadataDisplay";
 
 function Page() {
 	const navigate = useNavigate();
@@ -90,13 +91,23 @@ function Page() {
 				) : undefined}
 				{posts.map((post, index) => {
 					return (
-						<PostDisplay
-							key={index}
-							post={post}
-							onImageClick={(marketIdentifier) => {
-								navigate(`/post/${marketIdentifier}`);
-							}}
-						/>
+						<Flex
+							padding={2}
+							backgroundColor={COLORS.PRIMARY}
+							borderRadius={8}
+							marginBottom={4}
+							flexDirection={"column"}
+						>
+							<MetadataDisplay
+								metadata={post.metadata}
+								url={post.post.url}
+								onClick={() => {
+									navigate(
+										`/post/${post.post.marketIdentifier}`
+									);
+								}}
+							/>
+						</Flex>
 					);
 				})}
 			</Flex>

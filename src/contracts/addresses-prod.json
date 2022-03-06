@@ -1,7 +1,7 @@
 {
-	"GroupProxyFactory": "0xeD3bC90C812d471E2a6769AE89f4aE441AbB7dc2",
-	"GroupSingleton": "0xeD3bC90C812d471E2a6769AE89f4aE441AbB7dc2",
-	"MarketRouter": "0x5eC9e9cd407a6b0FCD2d3DCFB50F706CfCF8DaF2",
-	"GroupRouter": "0x5eC9e9cd407a6b0FCD2d3DCFB50F706CfCF8DaF2",
-	"WETH": "0xebbc3452cc911591e4f18f3b36727df45d6bd1f9"
+	"GroupSingleton": "0xe8db346e1287f0044cac91a11e7d90dbd307da78",
+	"GroupProxyFactory": "0x1f7e73cefe7562fd2461e966cdfbc40645a6a3a4",
+	"GroupRouter": "0x71aee0888a12359bb2198ce58f3694b0b9b6450d",
+	"Group": "0x4d98f5cee3f623ef066925119bd99e963a2fc3e5",
+	"WETH": "0xc99ce855c5051fed2b9a84595f312ef3832e38c8"
 }

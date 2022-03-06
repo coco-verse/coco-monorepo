@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { COLORS, sliceAddress, findUrlName, formatMetadata } from "../utils";
 
-function MetadataDisplay({ metadata, url }) {
+function MetadataDisplay({ metadata, url, onClick }) {
 	const navigate = useNavigate();
 
 	if (!metadata) {
@@ -32,13 +32,34 @@ function MetadataDisplay({ metadata, url }) {
 
 	return (
 		<Flex flexDirection={"column"}>
-			<Text fontWeight={"semibold"} fontSize={13}>
-				{findUrlName(formatMetadata(metadata).url)}
-			</Text>
-			<Text fontSize={15} marginBottom={1}>
-				{formatMetadata(metadata).title}
-			</Text>
-			<Text fontSize={13}>{formatMetadata(metadata).description}</Text>
+			<div onClick={onClick}>
+				<Text
+					_hover={{
+						cursor: "pointer",
+					}}
+					fontWeight={"semibold"}
+					fontSize={13}
+				>
+					{findUrlName(formatMetadata(metadata).url)}
+				</Text>
+				<Text
+					_hover={{
+						cursor: "pointer",
+					}}
+					fontSize={15}
+					marginBottom={1}
+				>
+					{formatMetadata(metadata).title}
+				</Text>
+				<Text
+					_hover={{
+						cursor: "pointer",
+					}}
+					fontSize={13}
+				>
+					{formatMetadata(metadata).description}
+				</Text>
+			</div>
 			<Flex>
 				<Text
 					marginRight={1}
