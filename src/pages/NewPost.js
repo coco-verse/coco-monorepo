@@ -299,12 +299,25 @@ function Page() {
 			</Flex>
 			<Flex width="30%" paddingTop={5} flexDirection={"column"}>
 				<HelpBox
-					heading={"Posting to COCO"}
+					heading={"Rules for adding link"}
 					pointsArr={[
-						"1. Your post should be suitable for the group your are posting to.",
-						"2. To post you need to put in 0.05 WETH for YES, so that others can challenge your post if required.",
-						"3. Don't worry 0.05 WETH will only be deducted if someone challenges your post, otherwise nothing happens.",
-						"4. If someone challenges and you think your post is still suitable for group, then challenge them back to win their amount.",
+						"1. Only post links that don't contain misinformation/factually incorrect information.",
+						`2. To post, you need to sign a message that says "Here's 0.05 WETH that I putting in for YES (i.e. the link does not violates point (1)). If someone thinks otherwise feel free to challenge me."`,
+						`3. Don't worry, as long as no one challenges you (i.e. you don't post any bad link) no amount will be deducted from your account.`,
+						`4. Read "COCO rules" before procedding.`,
+					]}
+				/>
+				<HelpBox
+					heading={"COCO rules"}
+					pointsArr={[
+						`1. Any link posted to COCO should not contain misinformation/factually incorrect information.`,
+						`2. Every link posted is supported with initial challenge of amount 0.05 WETH in favour of "YES" (i.e. the contents of the link follow point (1)). This acts as an incentive for someone that thinks otherwise to challenge the link.`,
+						`3. If you think a link violates point (1), then challenge it by favouring "NO" (i.e. link violates point (1)). If you are right, you can potentailly win initial amount put in by link poster.`,
+						`4. Subsequent challenges are allowed, as long as they are made before challenge period expires and amount put in is 2x the amount put in the last challenge.`,
+						`5. If a challenge does not receives a challenge before time period expired, then the outcome favoured by the challenge is set as the final outcome`,
+						`6. If total volume put in for challenges related to a link reach 50 WETH, the moderation committee steps in to declare the final outcome`,
+						`7. Once final outcome is set, the last one to challenge in favour of final outcome wins the entire amount put in against the final outcome.`,
+						`8. Anyone that had put in amount in favour of final outcome, irrespective of whether they were the last one to do so, get their amount back.`,
 					]}
 				/>
 			</Flex>

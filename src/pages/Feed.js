@@ -11,6 +11,7 @@ import { resolvePath, useLocation, useNavigate, useParams } from "react-router";
 
 import WETHSwapper from "../components/WETHSwapper";
 import MetadataDisplay from "../components/MetadataDisplay";
+import HelpBox from "../components/HelpBox";
 
 function Page() {
 	const navigate = useNavigate();
@@ -113,6 +114,19 @@ function Page() {
 			</Flex>
 			<Flex flexDirection="column" width={"30%"} paddingTop={5}>
 				<WETHSwapper />
+				<HelpBox
+					heading={"COCO rules"}
+					pointsArr={[
+						`1. Any link posted to COCO should not contain misinformation/factually incorrect information.`,
+						`2. Every link posted is supported with initial challenge of amount 0.05 WETH in favour of "YES" (i.e. the contents of the link follow point (1)). This acts as an incentive for someone that thinks otherwise to challenge the link.`,
+						`3. If you think a link violates point (1), then challenge it by favouring "NO" (i.e. link violates point (1)). If you are right, you can potentailly win initial amount put in by link poster.`,
+						`4. Subsequent challenges are allowed, as long as they are made before challenge period expires and amount put in is 2x the amount put in the last challenge.`,
+						`5. If a challenge does not receives a challenge before time period expired, then the outcome favoured by the challenge is set as the final outcome`,
+						`6. If total volume put in for challenges related to a link reach 50 WETH, the moderation committee steps in to declare the final outcome`,
+						`7. Once final outcome is set, the last one to challenge in favour of final outcome wins the entire amount put in against the final outcome.`,
+						`8. Anyone that had put in amount in favour of final outcome, irrespective of whether they were the last one to do so, get their amount back.`,
+					]}
+				/>
 				<Flex
 					flexDirection="column"
 					padding={2}
