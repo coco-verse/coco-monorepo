@@ -13,8 +13,14 @@ import { createClient, Provider as URQLProvider } from "urql";
 
 // setting up theGraph's endpoint
 const client = createClient({
-	url:
-		"https://api.thegraph.com/subgraphs/name/janmajayamall/pm-content-test",
+	url: (() => {
+		if (process.env.REACT_APP_VERCEL_ENV === "development") {
+			return "https://api.thegraph.com/subgraphs/name/janmajayamall/pm-content-test";
+		} else {
+			// reutur staging config for both prod & staging
+			return "https://api.thegraph.com/subgraphs/name/janmajayamall/cocostaging";
+		}
+	})(),
 });
 
 // chakra ui theme

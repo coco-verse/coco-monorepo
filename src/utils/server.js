@@ -1,14 +1,14 @@
 import axios from "axios";
 
 import { generateRequestSignatures } from "./auth";
-import { getMarketIdentifierOfPost } from ".";
 
 export const baseInstance = axios.create({
 	baseURL: (() => {
-		if (process.env.REACT_APP_VERCEL_ENV === "production") {
-			return "https://extension.backend.cocoverse.club";
-		} else {
+		if (process.env.REACT_APP_VERCEL_ENV === "development") {
 			return "http://65.108.59.231:8000";
+		} else {
+			// reuturn staging config for both prod & staging
+			return "https://extension.backend.cocoverse.club";
 		}
 	})(),
 	timeout: 10000,
