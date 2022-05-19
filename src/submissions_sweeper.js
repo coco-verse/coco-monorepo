@@ -4,7 +4,7 @@ import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import {
 	dumpUninitialisedSubmissions,
-	removeFinNoOutcomeSubmissions,
+	removeFinalizedOutcomeNoByTimeExpiry,
 } from "./db_manager";
 import moment from "moment";
 import { reddit } from "./reddit";
@@ -26,6 +26,7 @@ export async function submissionsSweeper() {
 		) {
 			try {
 				const submissionId = dumpedSubmissionsRedditIds[index];
+				// TODO: Change to flair
 				await reddit.getSubmission(submissionId).remove({
 					spam: true,
 				});
@@ -33,23 +34,22 @@ export async function submissionsSweeper() {
 					`[submissionsSweeper] Submission with id=${submissionId} removed; reason="Dumped because Uninitialised"`
 				);
 
-				// reply to submission about removal
-				await replyToSubmission(
-					submissionId,
-					"Post Removed. Reason:Creator did not place the initial challenge required in time."
-				);
+				// Not sure whether should we reply?
+				// // reply to submission about removal
+				// await replyToSubmission(
+				// 	submissionId,
+				// 	"Post Removed. Reason:Creator did not place the initial challenge required in time."
+				// );
 			} catch (e) {
 				log.info(
 					`[submissionsSweeper] Removal of Submission with id=${submissionId} errored with error=${e}`
 				);
 			}
-
-			// TODO send a message to the creator for the removal
 		}
 
 		// initialised submissions with final outcome no
 		const removedSubmissionsRedditIds =
-			await removeFinNoOutcomeSubmissions();
+			await removeFinalizedOutcomeNoByTimeExpiry();
 		for (
 			let index = 0;
 			index < removedSubmissionsRedditIds.length;
@@ -57,6 +57,7 @@ export async function submissionsSweeper() {
 		) {
 			try {
 				const submissionId = removedSubmissionsRedditIds[index];
+				// TODO: Change to flair
 				await reddit.getSubmission(submissionId).remove({
 					spam: true,
 				});
@@ -64,11 +65,11 @@ export async function submissionsSweeper() {
 					`[submissionsSweeper] Submission with id=${submissionId} removed; reson="Final outcome is 0"`
 				);
 
-				// reply to submission about removal
-				await replyToSubmission(
-					submissionId,
-					`Post Removed. Reason:Submission resolved with final outcome "NO" after challenges.`
-				);
+				// // reply to submission about removal
+				// await replyToSubmission(
+				// 	submissionId,
+				// 	`Post Removed. Reason:Submission resolved with final outcome "NO" after challenges.`
+				// );
 			} catch (e) {
 				log.info(
 					`[submissionsSweeper] Removal of Submission with id=${submissionId} errored with error=${e}`

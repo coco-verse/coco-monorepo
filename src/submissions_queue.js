@@ -10,9 +10,11 @@ const timeoutInternalSecs = 5;
 export async function submissionsQueue() {
 	try {
 		// get latest submissions
-		const subreddit = await reddit.getSubreddit("coco_club");
+		const subreddit = await reddit.getSubreddit("COCOtest");
 		const newSubmissions = await subreddit.getNew({ limit: 100 });
 		submissionQueue = submissionQueue.concat(newSubmissions);
+
+		log.info(`Submission queue ${JSON.stringify(submissionQueue)}`);
 
 		setTimeout(() => {
 			submissionsQueue();

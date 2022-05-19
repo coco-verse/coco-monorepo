@@ -5,7 +5,7 @@ log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import { addresses, getMarketDetails, getMarketState } from "./contracts";
 import { findSubmission, updateSubmissionDetails } from "./db_manager";
-import { replyToSubmission, timeLeftForChallenge } from "./helpers";
+import { constants, replyToSubmission, timeLeftForChallenge } from "./helpers";
 
 const web3 = createAlchemyWeb3(process.env.ALCHEMY_WSS_URL);
 
@@ -17,6 +17,9 @@ const eventSignatures = {
 		"0xbc2bccc2713ac25dc4bcda6e2a6c18b5c5cd08d9c00fa807a841a510d6c11a79",
 	Redeemed:
 		"0xa3364817cc6a3d1dfc5e4970c5ff96bbba39cb4182e88c06bad5ca2feffb1dca",
+	// TODO set correct value for `OutcomeSet`
+	OutcomeSet:
+		"0xa3364817cc6a3d1dfc5e4970c5ff96bbba39cb4182e88c06bad5ca2feffb1dcT",
 };
 
 export async function eventsProcessor(error, logValue) {
@@ -53,6 +56,12 @@ export async function eventsProcessor(error, logValue) {
 		log.info(
 			`[eventProcessor] "Redeemed" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
 		);
+	} else if (eventIdentifier == eventSignatures.OutcomeSet) {
+		marketIdentifier = logValue.topics[1];
+		groupAddress = logValue.address;
+		log.info(
+			`[eventProcessor] "OutcomeSet" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
+		);
 	} else {
 		// TODO Updating submission state in mongo when
 		// final outcome is declared using setOutcome
@@ -66,44 +75,40 @@ export async function eventsProcessor(error, logValue) {
 		return;
 	}
 
-	// get market details form chain
-	// AND update themm in db
+	// Update market details in db
 	const marketState = await getMarketState(groupAddress, marketIdentifier);
 	const marketDetails = await getMarketDetails(
 		groupAddress,
 		marketIdentifier
 	);
-	await updateSubmissionDetails(marketIdentifier, {
+
+	await reflectOnChainUpdatesInDb(marketIdentifier, {
 		...marketState,
 		...marketDetails,
 	});
 
-	// Reply to submission for update.
-	// Note - update replies are only sent for
-	// MarketCreated AND Challenged.
-	if (
-		eventIdentifier == eventSignatures.MarketCreated ||
-		eventIdentifier == eventSignatures.Challenged
-	) {
-		console.log(
-			"Time left to challenge ",
-			timeLeftForChallenge(marketState.donBufferEndsAt)
-		);
-		let replyText = `Challenge Update: Temporary Outcome=${
-			marketDetails.outcome == "0" ? "NO" : "YES"
-		}; Time left to challenge:${timeLeftForChallenge(
-			marketState.donBufferEndsAt
-		)}`;
+	// TODO update the flair depending on the outcome
+}
 
-		// get submission id
-		let submission = await findSubmission(marketIdentifier);
-		if (submission == undefined) {
-			log.info([
-				`[eventsProcessor] unable to find submission with submissionIdentifier=${marketIdentifier}`,
-			]);
-		}
-		await replyToSubmission(submission.submissionRedditId, replyText);
+async function reflectOnChainUpdatesInDb(marketIdentifier, updates) {
+	// Status should be changed to removed if `outcome` is 0 and final
+	// (i.e.
+	// 	(donBufferEndsAt <= currentTime && resolutionBufferEndsAt == 0) ||
+	// 	(resolutionBufferEndsAt <= currentTime && resolutionBufferEndsAt != 0)
+	// )
+	let currentTime = new Date().toISOString();
+	if (
+		((updates.donBufferEndsAt <= currentTime &&
+			updates.resolutionBufferEndsAt == 0) ||
+			(updates.resolutionBufferEndsAt <= currentTime &&
+				updates.resolutionBufferEndsAt != 0)) &&
+		updates.outcome == "0"
+	) {
+		updates.status = constants.SUBMISSION_STATUS.REMOVED;
 	}
+	await updateSubmissionDetails(marketIdentifier, {
+		...updates,
+	});
 }
 
 export function startEventsSubscription() {

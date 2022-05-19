@@ -63,10 +63,10 @@ export async function dumpUninitialisedSubmissions(olderThanTime) {
 	return submissions.map((sub) => sub.submissionRedditId);
 }
 
-export async function removeFinNoOutcomeSubmissions() {
+export async function removeFinalizedOutcomeNoByTimeExpiry() {
 	// remove under following conditions
 	// if (
-	// 	((dockerBufferEndsAt <= currentTime && resolutionBufferEndsAt == 0) ||
+	// 	((donBufferEndsAt <= currentTime && resolutionBufferEndsAt == 0) ||
 	// 		(resolutionBufferEndsAt <= currentTime &&
 	// 			resolutionBufferEndsAt != 0)) &&
 	// 	outcome == 0 &&

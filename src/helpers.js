@@ -60,6 +60,8 @@ export async function replyToSubmission(submissionId, text) {
 	}
 }
 
+export async function flairSubmissionWithOutcomeNo(submissionId) {}
+
 export function timeLeftForChallenge(donBufferEndsAt) {
 	let startTime = moment();
 	let endTime = moment(donBufferEndsAt);

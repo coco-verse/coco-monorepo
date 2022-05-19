@@ -15,8 +15,7 @@ export async function submissionsProcessor() {
 		// fetch queued submissions
 		const queuedSubmissions = consumeQueue();
 		for (let index = 0; index < queuedSubmissions.length; index++) {
-			const submission = queuedSubmissions[index];
-			await processSubmission(submission);
+			await processSubmission(queuedSubmissions[index]);
 		}
 
 		setTimeout(() => {

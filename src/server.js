@@ -21,7 +21,7 @@ import {
 import { routes } from "./routes";
 import moment from "moment";
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 const app = express();
 app.use(cors());
