@@ -5,7 +5,7 @@ import { generateRequestSignatures } from "./auth";
 export const baseInstance = axios.create({
 	baseURL: (() => {
 		if (process.env.REACT_APP_VERCEL_ENV === "development") {
-			return "http://65.108.59.231:8000";
+			return "http://127.0.0.1:3000";
 		} else {
 			// reuturn staging config for both prod & staging
 			return "https://extension.backend.cocoverse.club";
@@ -31,13 +31,13 @@ export async function findUrlsInfo(urls) {
 	} catch (e) {}
 }
 
-export async function findSubmissionsByIdentifiers(submissionIdentifiers) {
+export async function findSubmissionsByIdentifiers(identifiers) {
 	try {
 		const { data } = await baseInstance.request({
 			url: "/submission/find",
 			method: "POST",
 			data: {
-				filter: { submissionIdentifier: submissionIdentifiers },
+				filter: { marketIdentifier: identifiers },
 			},
 		});
 		return data.response;
@@ -45,7 +45,7 @@ export async function findSubmissionsByIdentifiers(submissionIdentifiers) {
 }
 
 export async function initialiseSubmission(
-	submissionIdentifier,
+	marketIdentifier,
 	challengeData,
 	challengeDataSignature,
 	groupAddress
@@ -55,7 +55,7 @@ export async function initialiseSubmission(
 			url: "/submission/initialise",
 			method: "POST",
 			data: {
-				submissionIdentifier,
+				marketIdentifier,
 				challengeData,
 				challengeDataSignature,
 				groupAddress,

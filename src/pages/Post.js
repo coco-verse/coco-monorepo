@@ -44,6 +44,11 @@ import {
 	GRAPH_BUFFER_MS,
 	createSetOutcomeTx,
 	createSafeTx,
+	findSubmissionsByIdentifiers,
+	SUBMISSION_STATUS,
+	CREATION_AMOUNT,
+	initialiseSubmission,
+	postSignTypedDataV4Helper,
 } from "../utils";
 import PostDisplay from "../components/PostDisplay";
 import { useParams } from "react-router";
@@ -55,18 +60,19 @@ import TwoColTitleInfo from "../components/TwoColTitleInfo";
 import HelpBox from "../components/HelpBox";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import MetadataDisplay from "../components/MetadataDisplay";
+import parse from "html-react-parser";
 
 function Page() {
 	const urlParams = useParams();
-	const postId = urlParams.postId ? urlParams.postId : undefined;
-	// const postId =
-	// 	"0xd8f23d7fd4c7fd7e97ddfb9a846f7ad112f37b7478ca26685dcefc2f9acf01e4";
+	// const postId = urlParams.postId ? urlParams.postId : undefined;
+	const postId =
+		"0x2253b09d76641e6205c4ed36f448154a23dbeeb60ed3259edcf9adb23a0363a0";
 
 	const { account, chainId } = useEthers();
 
 	const toast = useToast();
 
-	// CA - You might need to trigger this
+	// TODO: - You might need to trigger this
 	const {
 		result: rUserPositions,
 		reexecuteQuery: reUserPositions,
@@ -76,7 +82,6 @@ function Page() {
 		false
 	);
 
-	const [linkMetadata, setLinkMetadata] = useState(null);
 	const [post, setPost] = useState(null);
 	// main market data
 	// contains a flag whether it is on-chain or off-chain
@@ -135,26 +140,39 @@ function Page() {
 	);
 
 	// get safes & groups managed by the user
-	const { safes, groupIds } = useGetSafesAndGroupsManagedByUser(account);
+	// const { safes, groupIds } = useGetSafesAndGroupsManagedByUser(account);
 
 	// flag indicates whether post's
 	// groupAddress is managed
 	// by the user
-	const isUserAnOwner =
-		groupIds.find(
-			(id) =>
-				post != undefined &&
-				id.toLowerCase() == post.groupAddress.toLowerCase()
-		) != undefined
-			? true
-			: false;
+	// const isUserAnOwner =
+	// 	groupIds.find(
+	// 		(id) =>
+	// 			post != undefined &&
+	// 			id.toLowerCase() == post.groupAddress.toLowerCase()
+	// 	) != undefined
+	// 		? true
+	// 		: false;
 
-	// loading state of contrct fn calls
+	// loading state of contract fn calls
 	const [contractFnCallLoading, setContractFnCallLoading] = useState(false);
+	const [intialiseLoading, setInitialiseLoading] = useState(false);
 
+	// Should run whenever result or post info updates.
 	useEffect(() => {
-		// check whether market exists on chain
+		// return if initial challenge isn't present
+		if (
+			post == undefined ||
+			post.initStatus == undefined ||
+			post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ||
+			post.initStatus == SUBMISSION_STATUS.DUMPED
+		) {
+			// uninitialized or dumped
+			setMarketState(0);
+			return;
+		}
 		if (result.data && result.data.market) {
+			// check whether market exists on chain
 			// market exists on chain
 			const _marketData = formatMarketData(result.data.market, true);
 
@@ -168,17 +186,17 @@ function Page() {
 
 			if (_marketData.donBufferEndsAt - timestamp > 0) {
 				// state is in buffer period
-				setMarketState(1);
+				setMarketState(2);
 				setTimeLeftToChallenge(_marketData.donBufferEndsAt - timestamp);
 			} else if (_marketData.resolutionBufferEndsAt - timestamp > 0) {
 				// state is in resolution period
-				setMarketState(2);
+				setMarketState(3);
 				setTimeLeftToResolve(
 					_marketData.resolutionBufferEndsAt - timestamp
 				);
 			} else {
 				// state expired
-				setMarketState(3);
+				setMarketState(4);
 			}
 
 			// set stakes history
@@ -198,7 +216,7 @@ function Page() {
 			// market does not exists on chain
 			// populate challenge using creator's market data obj
 			const _marketData = formatMarketData(
-				JSON.parse(post.marketData),
+				JSON.parse(post.challengeData),
 				false
 			);
 
@@ -207,8 +225,8 @@ function Page() {
 			setTemporaryOutcome(1);
 			setCurrentAmountBn(_marketData.amount1);
 
-			// set market state to 0
-			setMarketState(0);
+			// set market state to 1
+			setMarketState(1);
 
 			// set min amount to challenge as input amount
 			setInput(formatBNToDecimal(_marketData.amount1.mul(TWO_BN)));
@@ -242,14 +260,14 @@ function Page() {
 	// get post details using postId;
 	// note: postId == marketIdentifier
 	useEffect(async () => {
-		let res = await findPostsByMarketIdentifierArr([postId]);
-		if (res == undefined || res.posts.length == 0) {
+		let res = await findSubmissionsByIdentifiers([postId]);
+		if (res == undefined || res.submissions.length == 0) {
 			// TODO set error
 			return;
 		}
-		console.log(res.posts[0]);
-		setPost(res.posts[0].post);
-		setLinkMetadata(res.posts[0].metadata);
+		console.log(res.submissions[0]);
+		setPost(res.submissions[0]);
+		// setLinkMetadata(res.posts[0].metadata);
 	}, [postId]);
 
 	// tracks loading state of contract fn calls
@@ -320,55 +338,136 @@ function Page() {
 		};
 	}
 
-	async function setOutcomeHelper() {
-		// throw if user isn't authenticated
-		if (!account || isUserAnOwner == false) {
-			toast({
-				title: "Invalid request!",
-				status: "error",
-				isClosable: true,
+	// async function setOutcomeHelper() {
+	// 	// throw if user isn't authenticated
+	// 	if (!account || isUserAnOwner == false) {
+	// 		toast({
+	// 			title: "Invalid request!",
+	// 			status: "error",
+	// 			isClosable: true,
+	// 		});
+	// 		return;
+	// 	}
+
+	// 	// throw if outcome to delare is not chosen
+	// 	if (
+	// 		chosenOutcome == undefined ||
+	// 		chosenOutcome < 0 ||
+	// 		chosenOutcome > 1
+	// 	) {
+	// 		toast({
+	// 			title: "Please chose an outcome!",
+	// 			status: "error",
+	// 			isClosable: true,
+	// 		});
+	// 		return;
+	// 	}
+
+	// 	// throw if any of necessary values are missing
+	// 	if (
+	// 		marketData.onChain == false ||
+	// 		marketData.group.id == undefined ||
+	// 		marketData.group.manager == undefined ||
+	// 		account == undefined
+	// 	) {
+	// 		toast({
+	// 			title: "Invalid Inputs!",
+	// 			status: "error",
+	// 			isClosable: true,
+	// 		});
+	// 		return;
+	// 	}
+
+	// 	const calldata = createSetOutcomeTx(chosenOutcome, marketData.id);
+
+	// 	await createSafeTx(
+	// 		marketData.group.id,
+	// 		calldata,
+	// 		0,
+	// 		marketData.group.manager,
+	// 		account
+	// 	);
+	// }
+
+	function constructIFrame(url) {
+		return `<iframe id="reddit-embed" src="${url}?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="600" width="600" scrolling="no"></iframe>`;
+	}
+
+	async function initialiseMarket() {
+		setInitialiseLoading(true);
+
+		try {
+			// validate that necessary data is present
+			if (post == undefined || account == undefined) {
+				toast({
+					title: "Something went wrong!",
+					status: "error",
+					isClosable: true,
+				});
+				throw Error();
+			}
+
+			// validate that user has given
+			// sufficient token allowance to
+			// GroupRouter
+			if (wETHTokenAllowance == false) {
+				toast({
+					title:
+						"Please give WETH approval to app before proceeding!",
+					status: "error",
+					isClosable: true,
+				});
+				throw Error();
+			}
+
+			// validate user has enough balance
+			if (
+				wETHTokenBalance == undefined ||
+				wETHTokenBalance.lt(CREATION_AMOUNT.add(ONE_BN))
+			) {
+				toast({
+					title: "min. of 0.05 WETH required!",
+					status: "error",
+					isClosable: true,
+				});
+				throw Error();
+			}
+
+			// signature for on-chain market
+			const { marketData, dataToSign } = postSignTypedDataV4Helper(
+				addresses.Group,
+				post.marketIdentifier,
+				CREATION_AMOUNT.toString(),
+				421611
+			);
+			const accounts = await window.ethereum.enable();
+			const marketSignature = await window.ethereum.request({
+				method: "eth_signTypedData_v3",
+				params: [accounts[0], dataToSign],
 			});
-			return;
+
+			// initialise the submission
+			const res = await initialiseSubmission(
+				post.marketIdentifier,
+				JSON.stringify(marketData),
+				marketSignature,
+				addresses.Group
+			);
+			if (res == undefined) {
+				toast({
+					title: "Something went wrong!",
+					status: "error",
+					isClosable: true,
+				});
+				throw Error();
+			}
+
+			// reload page
+			window.location.reload();
+		} catch (e) {
+			console.log("initialiseMarket error with - ", e);
+			setInitialiseLoading(false);
 		}
-
-		// throw if outcome to delare is not chosen
-		if (
-			chosenOutcome == undefined ||
-			chosenOutcome < 0 ||
-			chosenOutcome > 1
-		) {
-			toast({
-				title: "Please chose an outcome!",
-				status: "error",
-				isClosable: true,
-			});
-			return;
-		}
-
-		// throw if any of necessary values are missing
-		if (
-			marketData.onChain == false ||
-			marketData.group.id == undefined ||
-			marketData.group.manager == undefined ||
-			account == undefined
-		) {
-			toast({
-				title: "Invalid Inputs!",
-				status: "error",
-				isClosable: true,
-			});
-			return;
-		}
-
-		const calldata = createSetOutcomeTx(chosenOutcome, marketData.id);
-
-		await createSafeTx(
-			marketData.group.id,
-			calldata,
-			0,
-			marketData.group.manager,
-			account
-		);
 	}
 
 	return (
@@ -376,20 +475,23 @@ function Page() {
 			<Flex width="70%" flexDirection={"column"} padding={5}>
 				{/* {loadingMarket == true ? <Loader /> : undefined} */}
 				{/* <PostDisplay post={post} /> */}
-				{post != undefined ? (
-					<Flex
-						flexDirection={"column"}
-						padding={2}
-						backgroundColor={COLORS.PRIMARY}
-						borderRadius={8}
-						marginBottom={4}
-					>
-						<MetadataDisplay
-							metadata={linkMetadata}
-							url={post.url}
-						/>
-					</Flex>
-				) : undefined}
+				<Flex
+					// flexDirection={"column"}
+					padding={2}
+					backgroundColor={COLORS.PRIMARY}
+					borderRadius={8}
+					marginBottom={4}
+				>
+					<Spacer>
+						{post && post.submissionPermalink != undefined
+							? parse(
+									constructIFrame(
+										`https://www.redditmedia.com${post.submissionPermalink}`
+									)
+							  )
+							: undefined}
+					</Spacer>
+				</Flex>
 				<ChallengeHistoryTable stakes={stakes} />
 			</Flex>
 			<Flex width="30%" flexDirection={"column"} paddingTop={5}>
@@ -400,10 +502,32 @@ function Page() {
 					borderRadius={8}
 					marginBottom={4}
 				>
-					{marketState < 2 ? (
+					{post && post.initStatus == SUBMISSION_STATUS.DUMPED ? (
+						<Text>Your failed to initialize in time</Text>
+					) : undefined}
+					{post &&
+					post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ? (
 						<>
 							<Heading size="sm" marginBottom={2}>
-								Challenge Link
+								Initialize Submission
+							</Heading>
+							<PrimaryButton
+								loadingText="Processing..."
+								isLoading={intialiseLoading}
+								disabled={!account || !wETHTokenAllowance}
+								onClick={initialiseMarket}
+								title="Initialize"
+								style={{
+									marginTop: 5,
+								}}
+							/>
+						</>
+					) : undefined}
+
+					{marketState == 1 || marketState == 2 ? (
+						<>
+							<Heading size="sm" marginBottom={2}>
+								Challenge
 							</Heading>
 							<TwoColTitleInfo
 								title={"Temporary outcome:"}
@@ -499,10 +623,10 @@ function Page() {
 							/>
 						</>
 					) : undefined}
-					{marketState == 2 ? (
+					{marketState == 3 ? (
 						<>
 							<Heading size="sm" marginBottom={2}>
-								Link is under review
+								Submission is under review
 							</Heading>
 							<TwoColTitleInfo
 								title={"Time left for review:"}
@@ -512,10 +636,10 @@ function Page() {
 							/>
 						</>
 					) : undefined}
-					{marketState == 3 ? (
+					{marketState == 4 ? (
 						<>
 							<Heading size="sm" marginBottom={2}>
-								Post Resolved
+								Submission Resolved
 							</Heading>
 							<TwoColTitleInfo
 								title={"Final outcome:"}
@@ -624,63 +748,7 @@ function Page() {
 						}}
 					/>
 				) : undefined}
-				{isUserAnOwner == true && marketState == 2 ? (
-					<Flex
-						flexDirection={"column"}
-						padding={2}
-						backgroundColor={COLORS.PRIMARY}
-						borderRadius={8}
-						marginBottom={4}
-					>
-						<Heading size="sm" marginBottom={1}>
-							Declare Outcome
-						</Heading>
-						<Text fontSize={12} marginBottom={1}>
-							You are seeing this because you are one of the
-							moderators of the group
-						</Text>
-						<Text fontSize={12} marginBottom={1}>
-							By clicking on Declare you propose a transaction to
-							group's gnosis-safe.
-						</Text>
-
-						<Link
-							marginBottom={1}
-							fontSize={12}
-							href={
-								"https://cocosafeapp.efprivacyscaling.org/app/"
-							}
-							fontWeight={"semibold"}
-							isExternal
-						>
-							{"Visit safe"}
-							<ExternalLinkIcon mx="2px" />
-						</Link>
-						<Select
-							onChange={(e) => {
-								setChosenOutcome(e.target.value);
-							}}
-							value={chosenOutcome}
-							placeholder="Choose outcome"
-						>
-							<option value={1}>YES</option>
-							<option value={0}>NO</option>
-						</Select>
-						<PrimaryButton
-							loadingText="Processing..."
-							isLoading={contractFnCallLoading}
-							disabled={
-								isUserAnOwner == false || marketState != 2
-							}
-							onClick={setOutcomeHelper}
-							title="Declare"
-							style={{
-								marginTop: 5,
-							}}
-						/>
-					</Flex>
-				) : undefined}
-
+				a
 				<HelpBox
 					heading={"COCO rules"}
 					pointsArr={[

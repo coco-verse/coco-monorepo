@@ -24,8 +24,10 @@
 		"ethers": "^5.5.1",
 		"framer-motion": "^4.0.0",
 		"graphql": "^16.0.1",
-		"html-react-parser": "^1.4.8",
+		"html-react-parser": "^1.4.12",
+		"i": "^0.3.7",
 		"immer": "^9.0.6",
+		"npm": "^8.10.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-error-overlay": "^6.0.9",
@@ -38,7 +40,7 @@
 		"web-vitals": "^1.1.2"
 	},
 	"scripts": {
-		"start-dev": "PORT=5000 REACT_APP_VERCEL_ENV=development react-scripts start",
+		"start-dev": "PORT=8000 REACT_APP_VERCEL_ENV=development react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject"

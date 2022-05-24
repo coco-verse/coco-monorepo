@@ -220,7 +220,7 @@ export function postSignTypedDataV4Helper(
 		name: "Group Router",
 		version: "v1",
 		chainId: chainId,
-		verifyingContract: addresses.GroupRouter, // TODO change this contract address to GroupRouter address
+		verifyingContract: addresses.GroupRouter,
 	};
 
 	const message = {
