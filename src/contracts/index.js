@@ -9,7 +9,7 @@ import addresses_test from "./addresses-test.json";
 export const addresses = addresses_test;
 
 export const web3Provider = new ethers.providers.JsonRpcProvider(
-	process.env.ALCHEMY_API
+	process.env.ALCHEMY_URL
 );
 
 // abis

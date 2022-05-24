@@ -6,8 +6,8 @@ const SubmissionSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		// submissionIdentifier = keccack256(submissionsPermalink)
-		submissionIdentifier: {
+		// marketIdentifier = keccack256(submissionsPermalink)
+		marketIdentifier: {
 			type: String,
 			required: true,
 		},
@@ -49,12 +49,5 @@ const SubmissionSchema = new mongoose.Schema(
 		timestamps: {},
 	}
 );
-
-// PostSchema.statics.findPostAndUpdate = function (filter, updates) {
-// 	return this.findOneAndUpdate(filter, updates, {
-// 		new: true,
-// 		upsert: true,
-// 	});
-// };
 
 export const Submission = mongoose.model("Submission", SubmissionSchema);

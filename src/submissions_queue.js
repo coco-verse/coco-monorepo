@@ -5,7 +5,7 @@ log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { reddit } from "./reddit.js";
 
 var submissionQueue = [];
-const timeoutInternalSecs = 5;
+const timeoutInternalSecs = 20;
 
 export async function submissionsQueue() {
 	try {
@@ -14,7 +14,7 @@ export async function submissionsQueue() {
 		const newSubmissions = await subreddit.getNew({ limit: 100 });
 		submissionQueue = submissionQueue.concat(newSubmissions);
 
-		log.info(`Submission queue ${JSON.stringify(submissionQueue)}`);
+		// log.info(`Submission queue ${JSON.stringify(submissionQueue)}`);
 
 		setTimeout(() => {
 			submissionsQueue();

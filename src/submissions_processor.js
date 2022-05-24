@@ -8,7 +8,7 @@ import { SubmissionSchema } from "./models/submission.js";
 import { consumeQueue } from "./submissions_queue.js";
 import { sendRemovalPrivateMessage } from "./submissions_sweeper.js";
 
-const timeoutIntervalSecs = 1;
+const timeoutIntervalSecs = 5;
 
 export async function submissionsProcessor() {
 	try {
@@ -29,11 +29,11 @@ export async function submissionsProcessor() {
 async function processSubmission(submission) {
 	try {
 		// check whether submission has already been added
-		const submissionIdentifier = keccackHash(submission.permalink);
-		const submissionExists = await findSubmission(submissionIdentifier);
+		const marketIdentifier = keccackHash(submission.permalink);
+		const submissionExists = await findSubmission(marketIdentifier);
 		if (submissionExists != undefined) {
 			log.debug(
-				`[processSubmission] Submission with identifier ${submissionIdentifier} exists`
+				`[processSubmission] Submission with identifier ${marketIdentifier} exists`
 			);
 			return;
 		}
@@ -41,12 +41,12 @@ async function processSubmission(submission) {
 		// add the submission
 		await addSubmission(submission);
 		log.info(
-			`[processSubmission] Submission with identifier ${submissionIdentifier} added`
+			`[processSubmission] Submission with identifier ${marketIdentifier} added`
 		);
 
 		// reply with challenge url
 		const reply = await submission.reply(
-			`Link to market - http://65.108.59.231:3000/post/${submissionIdentifier}`
+			`Link to market - http://127.0.0.1:8000/post/${marketIdentifier}`
 		);
 		await reply.distinguish({
 			status: true,

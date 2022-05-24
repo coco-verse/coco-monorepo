@@ -6,14 +6,14 @@ const router = Router();
 
 router.post("/initialise", async function (req, res, next) {
 	const {
-		submissionIdentifier,
+		marketIdentifier,
 		challengeData,
 		challengeDataSignature,
 		groupAddress,
 	} = req.body;
 
 	console.log(
-		submissionIdentifier,
+		marketIdentifier,
 		challengeData,
 		challengeDataSignature,
 		groupAddress
@@ -22,7 +22,7 @@ router.post("/initialise", async function (req, res, next) {
 
 	// check whether submission exists and is uninitialised
 	const submissionDoc = await models.Submission.findOne({
-		submissionIdentifier,
+		marketIdentifier,
 		initStatus: constants.SUBMISSION_STATUS.UNINITIALIZED,
 	});
 
@@ -33,7 +33,7 @@ router.post("/initialise", async function (req, res, next) {
 
 	await models.Submission.updateMany(
 		{
-			submissionIdentifier,
+			marketIdentifier,
 		},
 		{
 			challengeData,
@@ -46,14 +46,14 @@ router.post("/initialise", async function (req, res, next) {
 	res.status(200).send({
 		success: true,
 		response: {
-			submissionIdentifier,
+			marketIdentifier,
 		},
 	});
 });
 
 router.post("/find", async function (req, res, next) {
 	const { filter } = req.body;
-	console.log("filter receive ", filter);
+
 	const submissions = await models.Submission.find(filter);
 	res.status(200).send({
 		success: true,

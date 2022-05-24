@@ -18,7 +18,7 @@ export const constants = {
 		// DUMPED - posts that were dumped because their creator did not put in the initial challenge
 		DUMPED: "DUMPED",
 		// REMOVED - posts that were challenged and results in final outcome 0
-		REMOVED: "REMOVED",
+		// REMOVED: "REMOVED",
 	},
 };
 
@@ -60,7 +60,47 @@ export async function replyToSubmission(submissionId, text) {
 	}
 }
 
-export async function flairSubmissionWithOutcomeNo(submissionId) {}
+export async function flairSubmissionWithInvalid(submissionId) {
+	try {
+		let submission = await reddit.getSubmission(submissionId);
+		await submission.assignFlair({
+			text: "INVALID",
+			cssClass: "no",
+		});
+	} catch (e) {
+		log.error(
+			`[flairSubmissionWithInvalid] submissionId=${submissionId}; failed with error=${e}`
+		);
+	}
+}
+
+export async function flairSubmissionWithOutcomeNo(submissionId) {
+	try {
+		let submission = await reddit.getSubmission(submissionId);
+		await submission.assignFlair({
+			text: "NO",
+			cssClass: "no",
+		});
+	} catch (e) {
+		log.error(
+			`[flairSubmissionWithOutcomeNo] submissionId=${submissionId}; failed with error=${e}`
+		);
+	}
+}
+
+export async function removeSubmissionFlair(submissionId) {
+	try {
+		let submission = await reddit.getSubmission(submissionId);
+		await submission.assignFlair({
+			text: "",
+			cssClass: "no",
+		});
+	} catch (e) {
+		log.error(
+			`[removeSubmissionFlair] submissionId=${submissionId}; failed with error=${e}`
+		);
+	}
+}
 
 export function timeLeftForChallenge(donBufferEndsAt) {
 	let startTime = moment();
