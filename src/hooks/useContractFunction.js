@@ -11,14 +11,6 @@ import {
 	groupProxyFactoryContract,
 } from "../utils";
 
-export function useCreateGroupWithSafe() {
-	const { state, send } = useContractFunction(
-		groupProxyFactoryContract,
-		"createGroupWithSafe"
-	);
-	return { state, send };
-}
-
 export function useCreateAndChallengeMarket() {
 	const { state, send } = useContractFunction(
 		groupRouterContract,
@@ -35,14 +27,6 @@ export function useChallenge() {
 	return { state, send };
 }
 
-export function useCreateAndBetOnMarket() {
-	const { state, send } = useContractFunction(
-		groupRouterContract,
-		"createAndBetOnMarket"
-	);
-	return { state, send };
-}
-
 export function useBuyMinOutcomeTokensWithFixedAmount() {
 	const { state, send } = useContractFunction(
 		groupRouterContract,
@@ -51,26 +35,10 @@ export function useBuyMinOutcomeTokensWithFixedAmount() {
 	return { state, send };
 }
 
-export function useRedeemWins() {
-	const { state, send } = useContractFunction(
-		groupRouterContract,
-		"redeemWins"
-	);
-	return { state, send };
-}
-
 export function useRedeem(groupAddress) {
 	const { state, send } = useContractFunction(
 		groupContract(groupAddress),
 		"redeem"
-	);
-	return { state, send };
-}
-
-export function useRedeemWinsAndStake() {
-	const { state, send } = useContractFunction(
-		groupRouterContract,
-		"redeemWinsAndStake"
 	);
 	return { state, send };
 }
