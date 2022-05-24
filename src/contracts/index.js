@@ -5,7 +5,8 @@ export const addresses = (() => {
 	if (process.env.REACT_APP_VERCEL_ENV === "development") {
 		return addresses_dev;
 	} else {
-		// reutur staging config for both prod & staging
-		return addresses_staging;
+		// we don't care about prod rn
+		// return addresses_staging;
+		return addresses_dev;
 	}
 })();

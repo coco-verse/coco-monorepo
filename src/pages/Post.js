@@ -602,13 +602,14 @@ function Page() {
 											bnValue
 										);
 									} else {
+										console.log("I came here!");
 										sendCreateAndChallenge(
 											[
 												marketData.group,
 												marketData.marketIdentifier,
 												marketData.amount1,
 											],
-											post.marketSignature,
+											post.challengeDataSignature,
 											0,
 											bnValue
 										);
@@ -748,11 +749,11 @@ function Page() {
 						}}
 					/>
 				) : undefined}
-				a
+
 				<HelpBox
 					heading={"COCO rules"}
 					pointsArr={[
-						`1. Any link posted to COCO should not contain misinformation/factually incorrect information.`,
+						`1. Reddit submission should always adhere to r/CryptoCurrency rules`,
 						`2. Every link posted is supported with initial challenge of amount 0.05 WETH in favour of "YES" (i.e. the contents of the link follow point (1)). This acts as an incentive for someone that thinks otherwise to challenge the link.`,
 						`3. If you think a link violates point (1), then challenge it by favouring "NO" (i.e. link violates point (1)). If you are right, you can potentailly win initial amount put in by link poster.`,
 						`4. Subsequent challenges are allowed, as long as they are made before challenge period expires and amount put in is 2x the amount put in the last challenge.`,
