@@ -4,7 +4,12 @@ import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import { addresses, getMarketDetails, getMarketState } from "./contracts";
-import { findSubmission, updateSubmissionDetails } from "./db_manager";
+import {
+	findSubmission,
+	updateSubmissionDetails,
+	addUserStake,
+	increaseDonEscalationCount,
+} from "./db_manager";
 import {
 	constants,
 	replyToSubmission,
@@ -12,10 +17,10 @@ import {
 	flairSubmissionWithOutcomeNo,
 	removeSubmissionFlair,
 } from "./helpers";
+import { BigNumber, ethers } from "ethers";
 
 const web3 = createAlchemyWeb3(process.env.ALCHEMY_WSS_URL);
 
-// TODO fix this mess
 const eventSignatures = {
 	Challenged:
 		"0x3acea3967c5be24f16b75421c5e477dd8b549db84bdfe6f359ec3eb9f1749ffb",
@@ -27,6 +32,8 @@ const eventSignatures = {
 	OutcomeSet:
 		"0xa3364817cc6a3d1dfc5e4970c5ff96bbba39cb4182e88c06bad5ca2feffb1dcT",
 };
+
+const abiCoder = ethers.utils.defaultAbiCoder;
 
 export async function eventsProcessor(error, logValue) {
 	if (error != undefined) {
@@ -42,17 +49,71 @@ export async function eventsProcessor(error, logValue) {
 		return;
 	}
 
+	log.info(
+		`[eventProcessor] received event: ${JSON.stringify(logValue)}; LALALLAL`
+	);
+
 	let marketIdentifier;
 	let groupAddress;
 	if (eventIdentifier == eventSignatures.Challenged) {
 		marketIdentifier = logValue.topics[1];
 		groupAddress = logValue.address;
+
+		// decode data
+		let data = abiCoder.decode(
+			["address", "uint256", "uint8"],
+			logValue.data
+		);
+
+		// update user stake
+		addUserStake(
+			data[0],
+			groupAddress,
+			marketIdentifier,
+			0,
+			data[1].toString(),
+			data[2]
+		);
+
+		// update donEscalation Count
+		await increaseDonEscalationCount(marketIdentifier, 1);
+
 		log.info(
 			`[eventProcessor] "Challenged" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
 		);
 	} else if (eventIdentifier == eventSignatures.MarketCreated) {
 		marketIdentifier = logValue.topics[1];
 		groupAddress = logValue.address;
+
+		// decode data
+		let data = abiCoder.decode(["address", "address"], logValue.data);
+
+		// update stake for `creator`
+		addUserStake(
+			data[0],
+			groupAddress,
+			marketIdentifier,
+			// since this corresponds to user's initial challenge
+			// escalation index should be 1
+			1,
+			// initial challenge amount is always 0.5
+			"500000000000000000",
+			1
+		);
+
+		// update stake for `challenger`
+		addUserStake(
+			data[1],
+			groupAddress,
+			marketIdentifier,
+			2,
+			"1000000000000000000",
+			0
+		);
+
+		// set donEscalationCount to 2
+		await increaseDonEscalationCount(marketIdentifier, 2);
+
 		log.info(
 			`[eventProcessor] "MarketCreated" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
 		);

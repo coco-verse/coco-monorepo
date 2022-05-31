@@ -46,7 +46,7 @@ async function processSubmission(submission) {
 
 		// reply with challenge url
 		const reply = await submission.reply(
-			`Link to market - http://127.0.0.1:8000/post/${marketIdentifier}`
+			`Link to market - ${process.env.FRONTEND_URI}/${marketIdentifier}`
 		);
 		await reply.distinguish({
 			status: true,
