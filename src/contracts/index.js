@@ -3,10 +3,6 @@ dotenv.config();
 import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { ethers, BigNumber } from "ethers";
-import addresses_test from "./addresses-test.json";
-
-// TODO make this env dependent
-export const addresses = addresses_test;
 
 export const web3Provider = new ethers.providers.JsonRpcProvider(
 	process.env.ALCHEMY_URL

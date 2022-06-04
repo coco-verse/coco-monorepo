@@ -3,13 +3,8 @@ dotenv.config();
 import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
-import { addresses, getMarketDetails, getMarketState } from "./contracts";
-import {
-	findSubmission,
-	updateSubmissionDetails,
-	addUserStake,
-	increaseDonEscalationCount,
-} from "./db_manager";
+import { getMarketDetails, getMarketState } from "./contracts";
+import { findSubmission, updateSubmissionDetails } from "./db_manager";
 import {
 	constants,
 	replyToSubmission,
@@ -49,70 +44,19 @@ export async function eventsProcessor(error, logValue) {
 		return;
 	}
 
-	log.info(
-		`[eventProcessor] received event: ${JSON.stringify(logValue)}; LALALLAL`
-	);
+	log.info(`[eventProcessor] received event: ${JSON.stringify(logValue)};`);
 
 	let marketIdentifier;
 	let groupAddress;
 	if (eventIdentifier == eventSignatures.Challenged) {
 		marketIdentifier = logValue.topics[1];
 		groupAddress = logValue.address;
-
-		// decode data
-		let data = abiCoder.decode(
-			["address", "uint256", "uint8"],
-			logValue.data
-		);
-
-		// update user stake
-		addUserStake(
-			data[0],
-			groupAddress,
-			marketIdentifier,
-			0,
-			data[1].toString(),
-			data[2]
-		);
-
-		// update donEscalation Count
-		await increaseDonEscalationCount(marketIdentifier, 1);
-
 		log.info(
 			`[eventProcessor] "Challenged" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
 		);
 	} else if (eventIdentifier == eventSignatures.MarketCreated) {
 		marketIdentifier = logValue.topics[1];
 		groupAddress = logValue.address;
-
-		// decode data
-		let data = abiCoder.decode(["address", "address"], logValue.data);
-
-		// update stake for `creator`
-		addUserStake(
-			data[0],
-			groupAddress,
-			marketIdentifier,
-			// since this corresponds to user's initial challenge
-			// escalation index should be 1
-			1,
-			// initial challenge amount is always 0.5
-			"500000000000000000",
-			1
-		);
-
-		// update stake for `challenger`
-		addUserStake(
-			data[1],
-			groupAddress,
-			marketIdentifier,
-			2,
-			"1000000000000000000",
-			0
-		);
-
-		// set donEscalationCount to 2
-		await increaseDonEscalationCount(marketIdentifier, 2);
 
 		log.info(
 			`[eventProcessor] "MarketCreated" event received; groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}`
@@ -133,7 +77,6 @@ export async function eventsProcessor(error, logValue) {
 		// TODO Updating submission state in mongo when
 		// final outcome is declared using setOutcome
 		// by the moderator is missing. Implement it.
-
 		log.info(
 			`[eventProcessor] "UnknownEvent" event received; logValue=${JSON.stringify(
 				logValue
@@ -198,7 +141,7 @@ export function startEventsSubscription() {
 	web3.eth.subscribe(
 		"logs",
 		{
-			address: addresses.Group,
+			address: process.env.GROUP,
 		},
 		eventsProcessor
 	);

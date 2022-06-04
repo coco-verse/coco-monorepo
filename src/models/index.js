@@ -4,7 +4,6 @@ import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import mongoose from "mongoose";
 import { Submission } from "./submission";
-import { Stake } from "./stake";
 
 export const connectDb = async () => {
 	let options = {};
@@ -20,4 +19,4 @@ export const connectDb = async () => {
 	log.info(`[connectDb] connected with db`);
 };
 
-export const models = { Submission, Stake };
+export const models = { Submission };

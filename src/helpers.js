@@ -55,7 +55,7 @@ export async function replyToSubmission(submissionId, text) {
 		await submission.reply(text);
 	} catch (e) {
 		log.error(
-			`[replyToSubmission] submissionId=${submissionId}; reply to submission faile with error=${e}`
+			`[replyToSubmission] submissionId=${submissionId}; reply to submission failed with error=${e}`
 		);
 	}
 }

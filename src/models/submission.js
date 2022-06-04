@@ -44,9 +44,6 @@ const SubmissionSchema = new mongoose.Schema(
 		outcome: {
 			type: String,
 		},
-		donEscalationCount: {
-			type: Number,
-		},
 	},
 	{
 		timestamps: {},

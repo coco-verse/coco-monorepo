@@ -1,25 +1,6 @@
 import { keccackHash, constants } from "./helpers";
 import { models } from "./models";
 
-// Stake functions
-export async function addUserStake(
-	userAddress,
-	groupAddress,
-	marketIdentifier,
-	donEscalationIndex,
-	amount,
-	outcome
-) {
-	return models.Stake.create({
-		userAddress,
-		groupAddress,
-		marketIdentifier,
-		donEscalationIndex,
-		amount,
-		outcome,
-	});
-}
-
 // Submission functions
 export async function findSubmission(marketIdentifier) {
 	return models.Submission.findOne({
@@ -34,20 +15,6 @@ export async function addSubmission(submission) {
 		submissionRedditId: submission.id,
 		initStatus: constants.SUBMISSION_STATUS.UNINITIALIZED,
 	});
-}
-
-export async function increaseDonEscalationCount(marketIdentifier, by) {
-	const sub = await findSubmission(marketIdentifier);
-	if (sub != undefined) {
-		return models.Submission.updateMany(
-			{
-				marketIdentifier,
-			},
-			{
-				donEscalationCount: sub.donEscalationCount + by,
-			}
-		);
-	}
 }
 
 export async function updateSubmissionToInitialised(
