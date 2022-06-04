@@ -11,7 +11,7 @@ import {
 	Link,
 } from "@chakra-ui/react";
 
-import { useEthers } from "@usedapp/core/packages/core";
+import { useEthers } from "@usedapp/core";
 import { useEffect } from "react";
 import { useState } from "react";
 import {
@@ -139,8 +139,6 @@ function Page() {
 		bnValue.isZero() ? CREATION_AMOUNT : bnValue
 	);
 
-	console.log(wETHTokenAllowance, "Token allowance");
-
 	// get safes & groups managed by the user
 	// const { safes, groupIds } = useGetSafesAndGroupsManagedByUser(account);
 
@@ -267,12 +265,18 @@ function Page() {
 			// TODO set error
 			return;
 		}
-		console.log(res.submissions[0]);
+
 		setPost(res.submissions[0]);
 		// setLinkMetadata(res.posts[0].metadata);
 	}, [postId]);
 
 	// tracks loading state of contract fn calls
+	// console.log(
+	// 	stateCreateAndChallenge,
+	// 	stateChallenge,
+	// 	stateRedeem,
+	// 	" LOLL some issue"
+	// );
 	useEffect(() => {
 		if (
 			stateCreateAndChallenge.status == "Success" ||
@@ -604,7 +608,6 @@ function Page() {
 											bnValue
 										);
 									} else {
-										console.log("I came here!");
 										sendCreateAndChallenge(
 											[
 												marketData.group,

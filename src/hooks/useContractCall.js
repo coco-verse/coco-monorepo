@@ -1,46 +1,49 @@
-import { useContractCall } from "@usedapp/core/packages/core";
-import { erc20Interface, groupInterface } from "../utils";
+import { useCall } from "@usedapp/core";
+import { Contract } from "ethers";
+import {
+	erc20Interface,
+	groupInterface,
+	erc20Contract,
+	groupContract,
+} from "../utils";
 
 export function useERC20TokenBalance(account, erc20Address) {
-	const [tokenBalance] =
-		useContractCall(
+	const { value } =
+		useCall(
 			account &&
 				erc20Address && {
-					abi: erc20Interface,
-					address: erc20Address,
+					contract: erc20Contract(erc20Address),
 					method: "balanceOf",
 					args: [account],
 				}
-		) ?? [];
-	return tokenBalance;
+		) ?? {};
+	return value ? value[0] : undefined;
 }
 
 export function useERC20TokenAllowance(erc20Address, account, routerAddress) {
-	const [allowance] =
-		useContractCall(
+	const { value } =
+		useCall(
 			account &&
 				erc20Address &&
 				routerAddress && {
-					abi: erc20Interface,
-					address: erc20Address,
+					contract: erc20Contract(erc20Address),
 					method: "allowance",
 					args: [account, routerAddress],
 				}
-		) ?? [];
-	return allowance;
+		) ?? {};
+	return value ? value[0] : undefined;
 }
 
 export function useERC1155ApprovalForAll(groupAddress, account, routerAddress) {
-	const [approval] =
-		useContractCall(
+	const { value, error } =
+		useCall(
 			account &&
 				groupAddress &&
 				routerAddress && {
-					abi: groupInterface,
-					address: groupAddress,
+					contract: groupContract(groupAddress),
 					method: "isApprovedForAll",
 					args: [account, routerAddress],
 				}
-		) ?? [];
-	return approval;
+		) ?? {};
+	return value ? value[0] : undefined;
 }

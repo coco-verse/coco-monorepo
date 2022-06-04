@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { DAppProvider } from "@usedapp/core/packages/core";
+import { DAppProvider } from "@usedapp/core";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
@@ -40,12 +40,12 @@ ReactDOM.render(
 			<Provider store={store}>
 				<DAppProvider
 					config={{
-						supportedChains: [configs.chainId],
-						multicallAddresses: {
-							[configs.chainId]: configs.multicallAddress,
-						},
+						readOnlyChainId: configs.chainId,
 						readOnlyUrls: {
 							[configs.chainId]: configs.chainRPC,
+						},
+						multicallAddresses: {
+							[configs.chainId]: configs.multicallAddress,
 						},
 					}}
 				>

@@ -32,7 +32,7 @@ import {
 	useERC20TokenAllowanceWrapper,
 	useERC20TokenBalance,
 } from "./../hooks";
-import { useEthers } from "@usedapp/core/packages/core";
+import { useEthers } from "@usedapp/core";
 import InputWithTitle from "../components/InputWithTitle";
 import PrimaryButton from "../components/PrimaryButton";
 import ApprovalInterface from "../components/ApprovalInterface";
@@ -164,7 +164,6 @@ function Page() {
 		setLoadingMetadata(true);
 
 		const res = await findUrlsInfo([link]);
-		console.log(res);
 		if (res == undefined || res.urlsInfo.length == 0) {
 			return;
 		}

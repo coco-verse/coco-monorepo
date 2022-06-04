@@ -1,7 +1,4 @@
-import {
-	useContractFunction,
-	useSendTransaction,
-} from "@usedapp/core/packages/core";
+import { useContractFunction, useSendTransaction } from "@usedapp/core";
 import {
 	groupRouterContract,
 	oracleContract,

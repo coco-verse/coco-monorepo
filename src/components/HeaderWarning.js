@@ -1,5 +1,5 @@
 import { Text, Flex, Spacer } from "@chakra-ui/react";
-import { useEthers } from "@usedapp/core/packages/core";
+import { useEthers } from "@usedapp/core";
 import { useState } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { configs } from "../contracts";

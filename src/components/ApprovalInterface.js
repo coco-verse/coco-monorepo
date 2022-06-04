@@ -6,7 +6,7 @@ import {
 	useERC20TokenAllowanceWrapper,
 	useERC1155ApprovalForAllWrapper,
 } from "../hooks";
-import { useEthers } from "@usedapp/core/packages/core";
+import { useEthers } from "@usedapp/core";
 import { useEffect, useState } from "react";
 
 import { MAX_UINT_256, ZERO_BN, COLORS } from "../utils";

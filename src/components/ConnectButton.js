@@ -1,5 +1,5 @@
 import { Box, Text, Flex } from "@chakra-ui/react";
-import { useEthers } from "@usedapp/core/packages/core";
+import { useEthers } from "@usedapp/core";
 import { useDispatch } from "react-redux";
 import { sUpdateLoginModalIsOpen } from "./../redux/reducers";
 import { useERC20TokenBalance } from "./../hooks";
@@ -15,7 +15,6 @@ function ConnectButton() {
 
 	const { account } = useEthers();
 	const tokenBalance = useERC20TokenBalance(account, configs.Token);
-	console.log(account, tokenBalance, " jk");
 	return (
 		<Flex m={2}>
 			<Box

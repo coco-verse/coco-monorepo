@@ -6,7 +6,7 @@ import {
 	IconButton,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { useEthers } from "@usedapp/core/packages/core";
+import { useEthers } from "@usedapp/core";
 import { useNavigate } from "react-router";
 
 function Item({ title, ...children }) {

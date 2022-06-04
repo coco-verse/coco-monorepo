@@ -1,6 +1,6 @@
 import PostDisplay from "../components/PostDisplay";
 import { Text, Flex } from "@chakra-ui/react";
-import { useEthers } from "@usedapp/core/packages/core";
+import { useEthers } from "@usedapp/core";
 import {} from "../hooks";
 
 import { useEffect, useState } from "react";
@@ -33,7 +33,6 @@ function Page() {
 				createdAt: -1,
 			}
 		);
-		console.log(res);
 		if (res == undefined) {
 			return;
 		}

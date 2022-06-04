@@ -14,7 +14,7 @@ import {
 	Text,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { useEthers } from "@usedapp/core/packages/core";
+import { useEthers } from "@usedapp/core";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -45,7 +45,6 @@ function LoginModal() {
 			});
 		}
 	}, [window.ethereum]);
-	console.log(account, chainId, " YOOOOO");
 	return (
 		<Modal
 			isOpen={isOpen}

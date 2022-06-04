@@ -7,7 +7,7 @@ import {
 	NumberInputField,
 	HStack,
 } from "@chakra-ui/react";
-import { useEtherBalance, useEthers } from "@usedapp/core/packages/core";
+import { useEtherBalance, useEthers } from "@usedapp/core";
 import { useDepositEthToWeth } from "../hooks";
 import { useEffect, useState } from "react";
 import { getFunctionSignature, useBNInput, COLORS } from "../utils";
