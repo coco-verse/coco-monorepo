@@ -1,12 +1,10 @@
-import addresses_staging from "./addresses-staging.json";
-import addresses_dev from "./addresses-dev.json";
+import configStaging from "./config-staging.json";
+import configDev from "./config-dev.json";
 
-export const addresses = (() => {
+export const configs = (() => {
 	if (process.env.REACT_APP_VERCEL_ENV === "development") {
-		return addresses_dev;
+		return configDev;
 	} else {
-		// we don't care about prod rn
-		// return addresses_staging;
-		return addresses_dev;
+		return configStaging;
 	}
 })();

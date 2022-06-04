@@ -7,8 +7,7 @@ export const baseInstance = axios.create({
 		if (process.env.REACT_APP_VERCEL_ENV === "development") {
 			return "http://127.0.0.1:3000";
 		} else {
-			// reuturn staging config for both prod & staging
-			return "https://extension.backend.cocoverse.club";
+			return "https://reddit.backend.cocoverse.club";
 		}
 	})(),
 	timeout: 10000,

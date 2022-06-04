@@ -5,7 +5,7 @@ import { sUpdateLoginModalIsOpen } from "./../redux/reducers";
 import { useERC20TokenBalance } from "./../hooks";
 import { formatBNToDecimalCurr, sliceAddress } from "../utils";
 import PrimaryButton from "./PrimaryButton";
-import { addresses } from "../contracts";
+import { configs } from "../contracts";
 
 /**
  * Authentication = (account (from MM)) != undefined
@@ -14,8 +14,8 @@ function ConnectButton() {
 	const dispatch = useDispatch();
 
 	const { account } = useEthers();
-	const tokenBalance = useERC20TokenBalance(account, addresses.WETH);
-	console.log(account, " jk");
+	const tokenBalance = useERC20TokenBalance(account, configs.Token);
+	console.log(account, tokenBalance, " jk");
 	return (
 		<Flex m={2}>
 			<Box

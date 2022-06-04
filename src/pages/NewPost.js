@@ -36,7 +36,7 @@ import { useEthers } from "@usedapp/core/packages/core";
 import InputWithTitle from "../components/InputWithTitle";
 import PrimaryButton from "../components/PrimaryButton";
 import ApprovalInterface from "../components/ApprovalInterface";
-import { addresses } from "../contracts";
+import { configs } from "../contracts";
 import HelpBox from "../components/HelpBox";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { useNavigate, useParams } from "react-router";
@@ -49,11 +49,11 @@ function Page() {
 
 	const toast = useToast();
 
-	const wEthTokenBalance = useERC20TokenBalance(account, addresses.WETH);
+	const wEthTokenBalance = useERC20TokenBalance(account, configs.Token);
 	const wETHTokenAllowance = useERC20TokenAllowanceWrapper(
-		addresses.WETH,
+		configs.Token,
 		account,
-		addresses.GroupRouter,
+		configs.GroupRouter,
 		CREATION_AMOUNT.add(ONE_BN)
 	);
 
@@ -81,11 +81,7 @@ function Page() {
 			setNewPostLoading(true);
 
 			// validate title
-			if (
-				!addresses.Group ||
-				addresses.Group == "" ||
-				urlInfo == undefined
-			) {
+			if (!configs.Group || configs.Group == "" || urlInfo == undefined) {
 				toast({
 					title: "Invalid Input!",
 					status: "error",
@@ -120,10 +116,10 @@ function Page() {
 
 			// signature for on-chain market
 			const { marketData, dataToSign } = postSignTypedDataV4Helper(
-				addresses.Group,
+				configs.Group,
 				marketIdentifier,
 				CREATION_AMOUNT.toString(),
-				421611
+				configs.chainId
 			);
 			const accounts = await window.ethereum.enable();
 			const marketSignature = await window.ethereum.request({
@@ -135,7 +131,7 @@ function Page() {
 			let body = {
 				creatorAddress: account.toLowerCase(),
 				url: urlInfo.url,
-				groupAddress: addresses.Group.toLowerCase(),
+				groupAddress: configs.Group.toLowerCase(),
 				marketSignature,
 				marketData: JSON.stringify(marketData),
 			};
@@ -278,7 +274,7 @@ function Page() {
 					<ApprovalInterface
 						marginTop={5}
 						tokenType={0}
-						erc20Address={addresses.WETH}
+						erc20Address={configs.Token}
 						erc20AmountBn={CREATION_AMOUNT.add(ONE_BN)}
 						onSuccess={() => {
 							toast({

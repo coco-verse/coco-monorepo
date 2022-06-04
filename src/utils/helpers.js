@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { parse } from "graphql";
 import { ZERO_BN, TWO_BN } from "./constants";
 import { useTab } from "@chakra-ui/tabs";
-import { CURR_SYMBOL, MULTIPLIER_BASE, MULTIPLIER, ONE_BN } from ".";
-import { addresses } from "./../contracts";
+import { MULTIPLIER_BASE, MULTIPLIER, ONE_BN } from ".";
+import { configs } from "./../contracts";
 
 export function formatMarketData(market, onChain) {
 	if (onChain == true) {
@@ -96,11 +96,11 @@ export function formatBNToDecimal(val, base = 18, round = true, dp = 6) {
 }
 
 export function formatBNToDecimalCurr(val, base = 18, dp = 6) {
-	return `${formatBNToDecimal(val, base, true, dp)} ${CURR_SYMBOL}`;
+	return `${formatBNToDecimal(val, base, true, dp)} ${configs.TokenSymbol}`;
 }
 
 export function formatDecimalToCurr(value, dp = 6) {
-	return `${roundDecimalStr(value, dp)} ${CURR_SYMBOL}`;
+	return `${roundDecimalStr(value, dp)} ${configs.TokenSymbol}`;
 }
 
 export function formatDecimalToPercentage(value, dp = 6) {
@@ -220,7 +220,7 @@ export function postSignTypedDataV4Helper(
 		name: "Group Router",
 		version: "v1",
 		chainId: chainId,
-		verifyingContract: addresses.GroupRouter,
+		verifyingContract: configs.GroupRouter,
 	};
 
 	const message = {

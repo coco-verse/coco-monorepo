@@ -41,6 +41,7 @@
 	},
 	"scripts": {
 		"start-dev": "PORT=8000 REACT_APP_VERCEL_ENV=development react-scripts start",
+		"start-prod": "PORT=8000 REACT_APP_VERCEL_ENV=production react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject"

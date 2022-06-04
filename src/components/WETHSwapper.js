@@ -14,7 +14,7 @@ import { getFunctionSignature, useBNInput, COLORS } from "../utils";
 
 import { useDispatch, useSelector } from "react-redux";
 import PrimaryButton from "./PrimaryButton";
-import { addresses } from "./../contracts";
+import { configs } from "./../contracts";
 
 function WETHSwapper() {
 	const { account } = useEthers();
@@ -123,7 +123,7 @@ function WETHSwapper() {
 					const fnSig = getFunctionSignature("deposit()");
 
 					sendTransaction({
-						to: addresses.WETH,
+						to: configs.Token,
 						value: inputEthBn,
 						data: fnSig,
 					});

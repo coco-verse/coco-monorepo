@@ -54,7 +54,7 @@ import PostDisplay from "../components/PostDisplay";
 import { useParams } from "react-router";
 import PrimaryButton from "../components/PrimaryButton";
 import ChallengeHistoryTable from "../components/ChallengeHistoryTable";
-import { addresses } from "../contracts";
+import { configs } from "../contracts";
 import ApprovalInterface from "../components/ApprovalInterface";
 import TwoColTitleInfo from "../components/TwoColTitleInfo";
 import HelpBox from "../components/HelpBox";
@@ -64,9 +64,9 @@ import parse from "html-react-parser";
 
 function Page() {
 	const urlParams = useParams();
-	// const postId = urlParams.postId ? urlParams.postId : undefined;
-	const postId =
-		"0x2253b09d76641e6205c4ed36f448154a23dbeeb60ed3259edcf9adb23a0363a0";
+	const postId = urlParams.postId ? urlParams.postId : undefined;
+	// const postId =
+	// "0x2253b09d76641e6205c4ed36f448154a23dbeeb60ed3259edcf9adb23a0363a0";
 
 	const { account, chainId } = useEthers();
 
@@ -131,13 +131,15 @@ function Page() {
 	);
 
 	// check WETH balance and allowance
-	const wETHTokenBalance = useERC20TokenBalance(account, addresses.WETH);
+	const wETHTokenBalance = useERC20TokenBalance(account, configs.Token);
 	const wETHTokenAllowance = useERC20TokenAllowanceWrapper(
-		addresses.WETH,
+		configs.Token,
 		account,
-		addresses.GroupRouter,
-		bnValue
+		configs.GroupRouter,
+		bnValue.isZero() ? CREATION_AMOUNT : bnValue
 	);
+
+	console.log(wETHTokenAllowance, "Token allowance");
 
 	// get safes & groups managed by the user
 	// const { safes, groupIds } = useGetSafesAndGroupsManagedByUser(account);
@@ -435,10 +437,10 @@ function Page() {
 
 			// signature for on-chain market
 			const { marketData, dataToSign } = postSignTypedDataV4Helper(
-				addresses.Group,
+				configs.Group,
 				post.marketIdentifier,
 				CREATION_AMOUNT.toString(),
-				421611
+				configs.chainId
 			);
 			const accounts = await window.ethereum.enable();
 			const marketSignature = await window.ethereum.request({
@@ -451,7 +453,7 @@ function Page() {
 				post.marketIdentifier,
 				JSON.stringify(marketData),
 				marketSignature,
-				addresses.Group
+				configs.Group
 			);
 			if (res == undefined) {
 				toast({
@@ -728,27 +730,25 @@ function Page() {
 						</>
 					) : undefined}
 				</Flex>
-				{marketState < 2 ? (
-					<ApprovalInterface
-						tokenType={0}
-						erc20Address={addresses.WETH}
-						erc20AmountBn={bnValue}
-						onSuccess={() => {
-							toast({
-								title: "Success!",
-								status: "success",
-								isClosable: true,
-							});
-						}}
-						onFail={() => {
-							toast({
-								title: "Metamask err!",
-								status: "error",
-								isClosable: true,
-							});
-						}}
-					/>
-				) : undefined}
+				<ApprovalInterface
+					tokenType={0}
+					erc20Address={configs.Token}
+					erc20AmountBn={bnValue.isZero() ? CREATION_AMOUNT : bnValue}
+					onSuccess={() => {
+						toast({
+							title: "Success!",
+							status: "success",
+							isClosable: true,
+						});
+					}}
+					onFail={() => {
+						toast({
+							title: "Metamask err!",
+							status: "error",
+							isClosable: true,
+						});
+					}}
+				/>
 
 				<HelpBox
 					heading={"COCO rules"}

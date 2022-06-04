@@ -1,4 +1,3 @@
-import { addresses } from "../contracts";
 import {
 	useContractFunction,
 	useSendTransaction,

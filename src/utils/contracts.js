@@ -1,4 +1,4 @@
-import { addresses } from "./../contracts";
+import { configs } from "./../contracts";
 import { utils, Contract } from "ethers";
 import GroupRouterAbi from "../contracts/abis/GroupRouter.json";
 import GroupProxyFactoryAbi from "../contracts/abis/GroupProxyFactory.json"; // TODO change it GroupProxyFactoryAbi
@@ -12,12 +12,12 @@ export const erc20Interface = new utils.Interface(ERC20Abi);
 export const groupInterface = new utils.Interface(GroupAbi);
 
 export const groupProxyFactoryContract = new Contract(
-	addresses.GroupProxyFactory,
+	configs.GroupProxyFactory,
 	groupProxyFactoryInterface
 );
 
 export const groupRouterContract = new Contract(
-	addresses.GroupRouter,
+	configs.GroupRouter,
 	new utils.Interface(GroupRouterAbi)
 );
 

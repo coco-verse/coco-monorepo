@@ -21,6 +21,8 @@ import { useState } from "react";
 import { createHotAccount, getAccountNonce, loginUser } from "../utils";
 import { useNavigate } from "react-router";
 import MetamaskFox from "./../metamask_fox.svg";
+import { configs } from "../contracts";
+import { hexlify } from "ethers/lib/utils";
 
 function LoginModal() {
 	const dispatch = useDispatch();
@@ -43,7 +45,7 @@ function LoginModal() {
 			});
 		}
 	}, [window.ethereum]);
-
+	console.log(account, chainId, " YOOOOO");
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -95,7 +97,7 @@ function LoginModal() {
 					<Image width="30%" src={MetamaskFox} />
 					<Heading size="xl">Metamask</Heading>
 
-					{chainId === 421611 ? (
+					{chainId === configs.chainId ? (
 						<Text
 							style={{
 								...styles.actionText,
@@ -111,7 +113,7 @@ function LoginModal() {
 							Connect your wallet
 						</Text>
 					) : undefined}
-					{chainId !== 421611 ? (
+					{chainId !== configs.chainId ? (
 						<Text
 							style={{
 								...styles.actionText,
@@ -126,18 +128,18 @@ function LoginModal() {
 										method: "wallet_addEthereumChain",
 										params: [
 											{
-												chainId: "0x66EEB",
-												chainName: "Rinkeby-arbitrum",
+												chainId: hexlify(
+													configs.chainId
+												),
+												chainName: configs.chainName,
 												nativeCurrency: {
 													name: "Ethereum",
 													symbol: "ETH",
 													decimals: 18,
 												},
-												rpcUrls: [
-													"https://rinkeby.arbitrum.io/rpc",
-												],
+												rpcUrls: [configs.chainRPC],
 												blockExplorerUrls: [
-													"https://testnet.arbiscan.io/",
+													configs.blocExplorerUri,
 												],
 											},
 										],

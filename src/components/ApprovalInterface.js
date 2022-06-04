@@ -9,8 +9,8 @@ import {
 import { useEthers } from "@usedapp/core/packages/core";
 import { useEffect, useState } from "react";
 
-import { CURR_SYMBOL, MAX_UINT_256, ZERO_BN, COLORS } from "../utils";
-import { addresses } from "../contracts";
+import { MAX_UINT_256, ZERO_BN, COLORS } from "../utils";
+import { configs } from "../contracts";
 
 /**
  * tokenType -> 0: ERC20, 1: ERC1155
@@ -29,13 +29,13 @@ function ApprovalInterface({
 	const erc20TokenAllowance = useERC20TokenAllowanceWrapper(
 		erc20Address,
 		account,
-		addresses.GroupRouter,
+		configs.GroupRouter,
 		erc20AmountBn
 	);
 	const erc1155TokenApproval = useERC1155ApprovalForAllWrapper(
 		erc1155Address,
 		account,
-		addresses.GroupRouter
+		configs.GroupRouter
 	);
 
 	const {
@@ -96,7 +96,7 @@ function ApprovalInterface({
 		>
 			<Text fontWeight="bold" fontSize={12}>
 				{tokenType === 0
-					? `To spend your ${CURR_SYMBOL} tokens, you will first have to give approval to the app. This is only needed once.`
+					? `To spend your ${configs.TokenSymbol} tokens, you will first have to give approval to the app. This is only needed once.`
 					: `To spend your YES/NO shares, you will first have to give approval to the app. This is only needed once per group`}
 			</Text>
 			<PrimaryButton
@@ -112,9 +112,9 @@ function ApprovalInterface({
 					setLoading(true);
 
 					if (tokenType === 0) {
-						sendToken(addresses.GroupRouter, MAX_UINT_256);
+						sendToken(configs.GroupRouter, MAX_UINT_256);
 					} else if (tokenType === 1) {
-						sendERC1155(addresses.GroupRouter, true);
+						sendERC1155(configs.GroupRouter, true);
 					} else {
 						setLoading(false);
 					}

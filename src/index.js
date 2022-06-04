@@ -10,15 +10,15 @@ import { store } from "./redux/store";
 import { mode } from "@chakra-ui/theme-tools";
 import { BrowserRouter as Router } from "react-router-dom";
 import { createClient, Provider as URQLProvider } from "urql";
+import { configs } from "./contracts";
 
 // setting up theGraph's endpoint
 const client = createClient({
 	url: (() => {
 		if (process.env.REACT_APP_VERCEL_ENV === "development") {
-			return "https://api.thegraph.com/subgraphs/name/janmajayamall/pm-content-test";
+			return "https://reddit.graph.cocoverse.club/subgraphs/name/pm";
 		} else {
-			// reutur staging config for both prod & staging
-			return "https://api.thegraph.com/subgraphs/name/janmajayamall/cocostaging";
+			return "https://reddit.graph.cocoverse.club/subgraphs/name/pm";
 		}
 	})(),
 });
@@ -40,12 +40,12 @@ ReactDOM.render(
 			<Provider store={store}>
 				<DAppProvider
 					config={{
-						supportedChains: [421611],
-						// multicallAddresses: {
-						// 	421611: "0xed53fa304E7fcbab4E8aCB184F5FC6F69Ed54fF6",
-						// },
+						supportedChains: [configs.chainId],
+						multicallAddresses: {
+							[configs.chainId]: configs.multicallAddress,
+						},
 						readOnlyUrls: {
-							421611: "https://rinkeby.arbitrum.io/rpc",
+							[configs.chainId]: configs.chainRPC,
 						},
 					}}
 				>
