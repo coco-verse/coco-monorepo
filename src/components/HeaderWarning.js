@@ -8,6 +8,8 @@ function Component() {
 
 	const [close, setClose] = useState(false);
 
+	// FIXME
+	console.log(chainId, configs.chainId, "ERROR!");
 	if (chainId != configs.chainId && !close) {
 		return (
 			<Flex alignItems="center" bg="red.200" paddingRight={1}>

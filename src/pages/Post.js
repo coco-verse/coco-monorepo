@@ -73,14 +73,12 @@ function Page() {
 	const toast = useToast();
 
 	// TODO: - You might need to trigger this
-	const {
-		result: rUserPositions,
-		reexecuteQuery: reUserPositions,
-	} = useQueryUserPositionsByMarketIdentifier(
-		account ? account.toLowerCase() : undefined,
-		postId,
-		false
-	);
+	const { result: rUserPositions, reexecuteQuery: reUserPositions } =
+		useQueryUserPositionsByMarketIdentifier(
+			account ? account.toLowerCase() : undefined,
+			postId,
+			false
+		);
 
 	const [post, setPost] = useState(null);
 	// main market data
@@ -113,15 +111,12 @@ function Page() {
 	// stake history
 	const [stakes, setStakes] = useState([]);
 
-	const { input, bnValue, setInput, err, errText } = useBNInput(
-		validateInput
-	);
+	const { input, bnValue, setInput, err, errText } =
+		useBNInput(validateInput);
 
 	// contract function calls
-	const {
-		send: sendCreateAndChallenge,
-		state: stateCreateAndChallenge,
-	} = useCreateAndChallengeMarket();
+	const { send: sendCreateAndChallenge, state: stateCreateAndChallenge } =
+		useCreateAndChallengeMarket();
 	const { send: sendChallenge, state: stateChallenge } = useChallenge();
 	const { send: sendRedeem, state: stateRedeem } = useRedeem(groupAddress);
 
@@ -271,12 +266,7 @@ function Page() {
 	}, [postId]);
 
 	// tracks loading state of contract fn calls
-	// console.log(
-	// 	stateCreateAndChallenge,
-	// 	stateChallenge,
-	// 	stateRedeem,
-	// 	" LOLL some issue"
-	// );
+	console.log("stateChallenge: ", stateChallenge, "LOLL");
 	useEffect(() => {
 		if (
 			stateCreateAndChallenge.status == "Success" ||
@@ -418,8 +408,7 @@ function Page() {
 			// GroupRouter
 			if (wETHTokenAllowance == false) {
 				toast({
-					title:
-						"Please give WETH approval to app before proceeding!",
+					title: "Please give WETH approval to app before proceeding!",
 					status: "error",
 					isClosable: true,
 				});
