@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 
 import { useEthers } from "@usedapp/core";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import {
 	useBuyMinOutcomeTokensWithFixedAmount,
@@ -267,7 +267,7 @@ function Page() {
 
 	// tracks loading state of contract fn calls
 	console.log("stateChallenge: ", stateChallenge, "LOLL");
-	useEffect(() => {
+	useMemo(() => {
 		if (
 			stateCreateAndChallenge.status == "Success" ||
 			stateChallenge.status == "Success" ||
