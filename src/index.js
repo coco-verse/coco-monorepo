@@ -47,6 +47,7 @@ ReactDOM.render(
 						multicallAddresses: {
 							[configs.chainId]: configs.multicallAddress,
 						},
+						bufferGasLimitPercentage: 21000
 					}}
 				>
 					<ChakraProvider theme={theme}>
