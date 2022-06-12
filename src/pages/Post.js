@@ -266,7 +266,6 @@ function Page() {
 	}, [postId]);
 
 	// tracks loading state of contract fn calls
-	console.log("stateChallenge: ", stateChallenge, "LOLL");
 	useMemo(() => {
 		if (
 			stateCreateAndChallenge.status == "Success" ||
