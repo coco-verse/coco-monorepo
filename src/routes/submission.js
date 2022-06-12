@@ -12,12 +12,6 @@ router.post("/initialise", async function (req, res, next) {
 		groupAddress,
 	} = req.body;
 
-	console.log(
-		marketIdentifier,
-		challengeData,
-		challengeDataSignature,
-		groupAddress
-	);
 	// TODO verify that challengeData is valid
 
 	// check whether submission exists and is uninitialised
