@@ -37,6 +37,13 @@ async function processSubmission(submission) {
 			);
 			return;
 		}
+		// if submission is older than 10 mins then don't process
+		if (submission.created_utc < new Date().getTime() / 1000 - 10 * 60) {
+			log.debug(
+				`[processSubmission] Submission with identifier ${marketIdentifier} old than 10 minutes`
+			);
+			return;
+		}
 
 		// add the submission
 		await addSubmission(submission);
