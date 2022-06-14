@@ -385,6 +385,7 @@ function Page() {
 	// }
 
 	function constructIFrame(url) {
+		console.log(url, " this is");
 		return `<iframe id="reddit-embed" src="${url}?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="600" width="600" scrolling="no"></iframe>`;
 	}
 
@@ -420,7 +421,7 @@ function Page() {
 				wETHTokenBalance.lt(CREATION_AMOUNT.add(ONE_BN))
 			) {
 				toast({
-					title: "min. of 0.05 WETH required!",
+					title: `min. of 0.05 ${configs.TokenSymbol} required!`,
 					status: "error",
 					isClosable: true,
 				});
@@ -745,7 +746,7 @@ function Page() {
 					heading={"COCO rules"}
 					pointsArr={[
 						`1. Reddit submission should always adhere to r/CryptoCurrency rules`,
-						`2. Every link posted is supported with initial challenge of amount 0.05 WETH in favour of "YES" (i.e. the contents of the link follow point (1)). This acts as an incentive for someone that thinks otherwise to challenge the link.`,
+						`2. Every link posted is supported with initial challenge of amount 0.05 ${configs.TokenSymbol} in favour of "YES" (i.e. the contents of the link follow point (1)). This acts as an incentive for someone that thinks otherwise to challenge the link.`,
 						`3. If you think a link violates point (1), then challenge it by favouring "NO" (i.e. link violates point (1)). If you are right, you can potentailly win initial amount put in by link poster.`,
 						`4. Subsequent challenges are allowed, as long as they are made before challenge period expires and amount put in is 2x the amount put in the last challenge.`,
 						`5. If a challenge does not receives a challenge before time period expired, then the outcome favoured by the challenge is set as the final outcome`,

@@ -12,6 +12,7 @@ import { resolvePath, useLocation, useNavigate, useParams } from "react-router";
 import WETHSwapper from "../components/WETHSwapper";
 import MetadataDisplay from "../components/MetadataDisplay";
 import HelpBox from "../components/HelpBox";
+import { configs } from "../contracts";
 
 function Page() {
 	const navigate = useNavigate();
@@ -117,7 +118,7 @@ function Page() {
 					heading={"COCO rules"}
 					pointsArr={[
 						`1. Any link posted to COCO should not contain misinformation/factually incorrect information.`,
-						`2. Every link posted is supported with initial challenge of amount 0.05 WETH in favour of "YES" (i.e. the contents of the link follow point (1)). This acts as an incentive for someone that thinks otherwise to challenge the link.`,
+						`2. Every link posted is supported with initial challenge of amount 0.05 ${configs.TokenSymbol} in favour of "YES" (i.e. the contents of the link follow point (1)). This acts as an incentive for someone that thinks otherwise to challenge the link.`,
 						`3. If you think a link violates point (1), then challenge it by favouring "NO" (i.e. link violates point (1)). If you are right, you can potentailly win initial amount put in by link poster.`,
 						`4. Subsequent challenges are allowed, as long as they are made before challenge period expires and amount put in is 2x the amount put in the last challenge.`,
 						`5. If a challenge does not receives a challenge before time period expired, then the outcome favoured by the challenge is set as the final outcome`,
