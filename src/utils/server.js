@@ -7,7 +7,7 @@ export const baseInstance = axios.create({
 		if (process.env.REACT_APP_VERCEL_ENV === "development") {
 			return "http://127.0.0.1:3000";
 		} else {
-			return "http://127.0.0.1:3000";
+			// return "http://127.0.0.1:3000";
 			return "https://reddit.backend.cocoverse.club";
 		}
 	})(),
