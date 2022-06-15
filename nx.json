@@ -1,0 +1,21 @@
+{
+    "extends": "@nrwl/workspace/presets/npm.json",
+    "affected": {
+      "defaultBase": "main"
+    },
+    "npmScope": "@my-scope",
+    "tasksRunnerOptions": {
+      "default": {
+        "runner": "@nrwl/workspace/tasks-runners/default"
+      }
+    },
+    "implicitDependencies": {
+      "pnpm-workspace.yaml": "*",
+      "pnpm-lock.yaml": "*",
+      "package.json": {
+        "dependencies": "*",
+        "devDependencies": "*"
+      },
+      "nx.json": "*"
+    }
+  }
