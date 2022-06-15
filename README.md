@@ -1,5 +1,9 @@
 # COCO
 
+<p align='center'>
+    <img src='./packages/frontend/public/coco-logo.png' alt='coco-logo' width="200" height="200" />
+</p>
+
 Coco is like any other social networking site - you can create groups on topics of interest, join groups, post in groups, but with a twist.
 In Coco group feeds are moderated by community through challenges.
 
