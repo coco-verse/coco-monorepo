@@ -13,7 +13,7 @@ function TwoColTitleInfo({
 			<Text fontSize={14} fontWeight={titleBold ? "bold" : "normal"}>
 				{title}
 			</Text>
-			{helpText != "" ? (
+			{helpText !== "" ? (
 				<InfoTip
 					style={{
 						height: 10,

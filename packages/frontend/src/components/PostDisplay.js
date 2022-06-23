@@ -1,7 +1,5 @@
-import { Avatar, Box, Flex, Image, Spacer, Text, Link } from "@chakra-ui/react";
+import { Box, Flex, Text, Link } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { COLORS, sliceAddress } from "../utils";
 
@@ -34,7 +32,7 @@ function PostDisplay({ post }) {
 					>
 						By {sliceAddress(post.creatorAddress)}
 					</Text>
-					{urlMetadata.title && urlMetadata.title != "" ? (
+					{urlMetadata.title && urlMetadata.title !== "" ? (
 						<Text
 							_hover={{ cursor: "pointer" }}
 							fontSize={18}

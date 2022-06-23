@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQueryGroupsByManagers } from ".";
-import { safeService, ZERO_BN } from "../utils";
+import { safeService } from "../utils";
 import {
 	useERC20TokenAllowance,
 	useERC1155ApprovalForAll,
@@ -18,7 +18,7 @@ export function useERC20TokenAllowanceWrapper(
 		approvalToAddress
 	);
 
-	return allowance == undefined ? true : erc20AmountBn.lte(allowance);
+	return allowance === undefined ? true : erc20AmountBn.lte(allowance);
 }
 
 export function useERC1155ApprovalForAllWrapper(
@@ -31,7 +31,7 @@ export function useERC1155ApprovalForAllWrapper(
 		account,
 		approvalToAddress
 	);
-	return approval == undefined ? true : approval;
+	return approval === undefined ? true : approval;
 }
 
 // Gets safes owned by account
@@ -52,19 +52,24 @@ export function useGetSafesAndGroupsManagedByUser(account) {
 		if (safes.length > 0) {
 			reexecuteGroupsByManagers();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [safes]);
 
-	useEffect(async () => {
-		try {
-			if (account == undefined) {
-				return;
+	useEffect(() => {
+		(
+			async () => {
+				try {
+					if (account === undefined) {
+						return;
+					}
+					let res = await safeService.getSafesByOwner(account);
+					if (res === undefined || res.safes === undefined) {
+						return;
+					}
+					setSafes(res.safes);
+				} catch (e) {}
 			}
-			let res = await safeService.getSafesByOwner(account);
-			if (res == undefined || res.safes == undefined) {
-				return;
-			}
-			setSafes(res.safes);
-		} catch (e) {}
+		)();
 	}, [account]);
 
 	useEffect(() => {

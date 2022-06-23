@@ -6,7 +6,6 @@ import {
 	IconButton,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { useEthers } from "@usedapp/core";
 import { useNavigate } from "react-router";
 
 function Item({ title, ...children }) {
@@ -24,8 +23,8 @@ function Item({ title, ...children }) {
 }
 
 function MainMenu() {
-	const { account } = useEthers();
-	const isAuthenticated = account ? true : false;
+	// const { account } = useEthers();
+	// const isAuthenticated = account ? true : false;
 	const navigate = useNavigate();
 
 	return (

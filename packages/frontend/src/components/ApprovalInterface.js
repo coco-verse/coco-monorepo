@@ -1,5 +1,5 @@
 import PrimaryButton from "./PrimaryButton";
-import { Flex, Box, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import {
 	useERC1155SetApprovalForAll,
 	useERC20Approve,
@@ -9,7 +9,7 @@ import {
 import { useEthers } from "@usedapp/core";
 import { useEffect, useState } from "react";
 
-import { MAX_UINT_256, ZERO_BN, COLORS } from "../utils";
+import { MAX_UINT_256, COLORS } from "../utils";
 import { configs } from "../contracts";
 
 /**
@@ -80,6 +80,7 @@ function ApprovalInterface({
 			}
 			setLoading(false);
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stateERC1155, stateToken]);
 
 	if (isDisabled()) {

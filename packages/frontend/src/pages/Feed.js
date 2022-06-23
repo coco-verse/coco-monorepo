@@ -1,13 +1,10 @@
-import PostDisplay from "../components/PostDisplay";
 import { Text, Flex } from "@chakra-ui/react";
-import { useEthers } from "@usedapp/core";
 import {} from "../hooks";
 
 import { useEffect, useState } from "react";
 import { findPosts, COLORS } from "../utils";
 import {} from "../redux/reducers";
-import { useDispatch, useSelector } from "react-redux";
-import { resolvePath, useLocation, useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 
 import WETHSwapper from "../components/WETHSwapper";
 import MetadataDisplay from "../components/MetadataDisplay";
@@ -17,27 +14,31 @@ import { configs } from "../contracts";
 function Page() {
 	const navigate = useNavigate();
 
-	const { account } = useEthers();
+	// const { account } = useEthers();
 
 	// const badMarketIdentifiers = useSelector(selectBadMarketIdentifiers);
 
-	const location = useLocation();
-	const urlParams = useParams();
+	// const location = useLocation();
+	// const urlParams = useParams();
 
 	const [posts, setPosts] = useState([]);
 
 	// get all posts depending on feedType
-	useEffect(async () => {
-		const res = await findPosts(
-			{},
-			{
-				createdAt: -1,
+	useEffect(() => {
+		(
+			async () => {
+				const res = await findPosts(
+					{},
+					{
+						createdAt: -1,
+					}
+				);
+				if (res === undefined) {
+					return;
+				}
+				setPosts(res.posts);
 			}
-		);
-		if (res == undefined) {
-			return;
-		}
-		setPosts(res.posts);
+		)();
 	}, []);
 
 	// infinite scroll
@@ -77,7 +78,7 @@ function Page() {
 				padding={5}
 				minHeight="100vh"
 			>
-				{posts.length == 0 ? (
+				{posts.length === 0 ? (
 					<Flex
 						padding={2}
 						backgroundColor={COLORS.PRIMARY}

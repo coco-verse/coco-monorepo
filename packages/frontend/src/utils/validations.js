@@ -1,11 +1,6 @@
 import { BigNumber } from "ethers";
 import {
-	MAX_LENGTH_DESCRIPTION,
-	MAX_LENGTH_NAME,
-	MAX_LENGTH_TITLE,
 	MAX_LENGTH_LINK,
-	ZERO_BN,
-	MAX_LENGTH_AUTHOR,
 } from ".";
 
 export function validateIsNumber(val) {
@@ -44,6 +39,7 @@ export function validateLinkURL(val) {
 	}
 
 	let reg =
+		// eslint-disable-next-line no-useless-escape
 		/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 	if (!reg.test(val) || val.length > MAX_LENGTH_LINK) {
 		return {

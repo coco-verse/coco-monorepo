@@ -1,8 +1,5 @@
 import { useCall } from "@usedapp/core";
-import { Contract } from "ethers";
 import {
-	erc20Interface,
-	groupInterface,
 	erc20Contract,
 	groupContract,
 } from "../utils";
@@ -35,7 +32,7 @@ export function useERC20TokenAllowance(erc20Address, account, routerAddress) {
 }
 
 export function useERC1155ApprovalForAll(groupAddress, account, routerAddress) {
-	const { value, error } =
+	const { value } =
 		useCall(
 			account &&
 				groupAddress &&

@@ -1,7 +1,6 @@
 import { Text, Flex, Table, Thead, Tr, Th, Td } from "@chakra-ui/react";
 import {
 	formatBNToDecimalCurr,
-	formatDecimalToCurr,
 	sliceAddress,
 	COLORS,
 } from "../utils";

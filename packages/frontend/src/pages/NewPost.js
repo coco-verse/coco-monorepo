@@ -1,31 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-	Select,
-	Image,
 	useToast,
 	Flex,
-	Spacer,
 	Heading,
 	Text,
-	Box,
-	Input,
-	Link,
 } from "@chakra-ui/react";
 
 import {
-	keccak256,
 	newPost,
 	CREATION_AMOUNT,
 	postSignTypedDataV4Helper,
-	TWO_BN,
 	ONE_BN,
 	COLORS,
-	validatePostTitle,
 	validateLinkURL,
 	getMarketIdentifierOfUrl,
 	findUrlsInfo,
-	formatMetadata,
-	findUrlName,
 	QUERY_STATUS,
 } from "./../utils";
 import {
@@ -45,7 +34,7 @@ import MetadataDisplay from "../components/MetadataDisplay";
 function Page() {
 	const urlParams = useParams();
 	const navigate = useNavigate();
-	const { account, chainId } = useEthers();
+	const { account } = useEthers();
 
 	const toast = useToast();
 
@@ -81,7 +70,7 @@ function Page() {
 			setNewPostLoading(true);
 
 			// validate title
-			if (!configs.Group || configs.Group == "" || urlInfo == undefined) {
+			if (!configs.Group || configs.Group === "" || urlInfo === undefined) {
 				toast({
 					title: "Invalid Input!",
 					status: "error",
@@ -91,7 +80,7 @@ function Page() {
 			}
 
 			// checks that token approval is given
-			if (wETHTokenAllowance == false) {
+			if (wETHTokenAllowance === false) {
 				toast({
 					title: "Please give WETH approval to app before proceeding!",
 					status: "error",
@@ -135,7 +124,7 @@ function Page() {
 			};
 
 			let res = await newPost(body);
-			if (res == undefined) {
+			if (res === undefined) {
 				toast({
 					title: "Something went wrong!",
 					status: "error",
@@ -155,14 +144,14 @@ function Page() {
 	}
 
 	async function getLinkMetadata() {
-		if (validateLinkURL(link).valid == false) {
+		if (validateLinkURL(link).valid === false) {
 			return;
 		}
 
 		setLoadingMetadata(true);
 
 		const res = await findUrlsInfo([link]);
-		if (res == undefined || res.urlsInfo.length == 0) {
+		if (res === undefined || res.urlsInfo.length === 0) {
 			return;
 		}
 
@@ -217,16 +206,16 @@ function Page() {
 					borderRadius={8}
 					flexDirection={"column"}
 				>
-					{urlInfo == undefined ? (
+					{urlInfo === undefined ? (
 						<Text>Nothing found...</Text>
 					) : undefined}
-					{urlInfo != undefined ? (
+					{urlInfo !== undefined ? (
 						<>
 							<MetadataDisplay
 								metadata={urlInfo.metadata}
 								url={urlInfo.url}
 							/>
-							{urlInfo.qStatus == QUERY_STATUS.FOUND ? (
+							{urlInfo.qStatus === QUERY_STATUS.FOUND ? (
 								<Flex
 									justifyContent="center"
 									paddingTop={5}
@@ -255,7 +244,7 @@ function Page() {
 									/>
 								</Flex>
 							) : undefined}
-							{urlInfo.qStatus == QUERY_STATUS.NOT_FOUND ? (
+							{urlInfo.qStatus === QUERY_STATUS.NOT_FOUND ? (
 								<PrimaryButton
 									title={"Add link"}
 									isLoading={newPostLoading}

@@ -258,6 +258,7 @@ export async function getPresignedUrl() {
 
 export async function uploadImageFile(presignedUrl, imageFile) {
 	try {
+		// eslint-disable-next-line no-unused-vars
 		const { data } = await axios.request({
 			url: presignedUrl,
 			method: "PUT",

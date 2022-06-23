@@ -8,7 +8,7 @@ import PrimaryButton from "./PrimaryButton";
 import { configs } from "../contracts";
 
 /**
- * Authentication = (account (from MM)) != undefined
+ * Authentication = (account (from MM)) !== undefined
  */
 function ConnectButton() {
 	const dispatch = useDispatch();
@@ -33,13 +33,13 @@ function ConnectButton() {
 				) : undefined}
 				<PrimaryButton
 					onClick={() => {
-						if (account != undefined) {
+						if (account !== undefined) {
 							return;
 						}
 						dispatch(sUpdateLoginModalIsOpen(true));
 					}}
 					title={
-						account != undefined
+						account !== undefined
 							? sliceAddress(account)
 							: "Connect Wallet"
 					}

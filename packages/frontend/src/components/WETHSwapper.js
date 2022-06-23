@@ -12,7 +12,6 @@ import { useDepositEthToWeth } from "../hooks";
 import { useEffect, useState } from "react";
 import { getFunctionSignature, useBNInput, COLORS } from "../utils";
 
-import { useDispatch, useSelector } from "react-redux";
 import PrimaryButton from "./PrimaryButton";
 import { configs } from "./../contracts";
 
@@ -44,7 +43,7 @@ function WETHSwapper() {
 			});
 		}
 
-		if (state.status == "Exception" || state.status == "Fail") {
+		if (state.status === "Exception" || state.status === "Fail") {
 			setSwapLoading(false);
 			toast({
 				title:
@@ -53,10 +52,11 @@ function WETHSwapper() {
 				isClosable: true,
 			});
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state]);
 
 	function validateEthInput() {
-		if (ethBalance == undefined || inputEthBn.lte(ethBalance)) {
+		if (ethBalance === undefined || inputEthBn.lte(ethBalance)) {
 			return { valid: true, expStr: "" };
 		}
 

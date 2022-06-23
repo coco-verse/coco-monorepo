@@ -1,12 +1,7 @@
 import {
-	Button,
-	Box,
 	Text,
 	Flex,
-	Spacer,
 	Heading,
-	Avatar,
-	IconButton,
 } from "@chakra-ui/react";
 import { COLORS } from "./../utils";
 

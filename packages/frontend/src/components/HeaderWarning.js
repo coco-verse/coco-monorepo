@@ -10,7 +10,7 @@ function Component() {
 
 	// FIXME
 	console.log(chainId, configs.chainId, "ERROR!");
-	if (chainId != configs.chainId && !close) {
+	if (chainId !== configs.chainId && !close) {
 		return (
 			<Flex alignItems="center" bg="red.200" paddingRight={1}>
 				<Spacer />

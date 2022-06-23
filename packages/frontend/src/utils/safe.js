@@ -97,7 +97,7 @@ export async function createSafeTx(
 	// ge tx hash for proposing it
 	const txHash = await safeSdk.getTransactionHash(tx);
 
-	const res = await safeService.proposeTransaction({
+	await safeService.proposeTransaction({
 		safeAddress,
 		senderAddress: account,
 		safeTransaction: tx,

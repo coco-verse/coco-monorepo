@@ -1,30 +1,13 @@
 import "./App.css";
-import logo from "./logo.svg";
 import {
-	Button,
-	Box,
-	Text,
 	Flex,
 	Spacer,
-	Switch,
-	Heading,
 	Image,
-	Avatar,
-	Slider,
-	SliderTrack,
-	SliderFilledTrack,
-	SliderThumb,
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	IconButton,
-	Select,
 } from "@chakra-ui/react";
 import HeaderWarning from "./components/HeaderWarning";
 import CocoFull from "./Coco-full.svg";
-import { getUser, findAllFollows, COLORS, findAllGroups } from "./utils";
-import { useLocation, Route, Routes, useNavigate } from "react-router";
+import { COLORS } from "./utils";
+import { Route, Routes, useNavigate } from "react-router";
 import Post from "./pages/Post";
 import MainMenu from "./components/MainMenu";
 import ConnectButton from "./components/ConnectButton";

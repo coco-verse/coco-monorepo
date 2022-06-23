@@ -1,13 +1,8 @@
-import { Avatar, Box, Flex, Image, Spacer, Text, Link } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
-import { COLORS, sliceAddress, findUrlName, formatMetadata } from "../utils";
+import { findUrlName, formatMetadata } from "../utils";
 
 function MetadataDisplay({ metadata, url, onClick }) {
-	const navigate = useNavigate();
-
 	if (!metadata) {
 		return (
 			<Flex>

@@ -1,10 +1,8 @@
 import { useContractFunction, useSendTransaction } from "@usedapp/core";
 import {
 	groupRouterContract,
-	oracleContract,
 	erc20Contract,
 	groupContract,
-	groupProxyFactoryContract,
 } from "../utils";
 
 export function useCreateAndChallengeMarket() {
