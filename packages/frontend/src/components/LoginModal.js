@@ -1,8 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
-import {
-	selectLoginModalState,
-	sUpdateLoginModalIsOpen,
-} from "../redux/reducers";
+import { hexlify } from "ethers/lib/utils";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { useEthers } from "@usedapp/core";
+import { CloseIcon } from "@chakra-ui/icons";
+import { useEffect } from "react";
+import { useState } from "react";
 import {
 	Flex,
 	Spacer,
@@ -13,16 +15,13 @@ import {
 	Image,
 	Text,
 } from "@chakra-ui/react";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { useEthers } from "@usedapp/core";
-import { CloseIcon } from "@chakra-ui/icons";
-import { useEffect } from "react";
-import { useState } from "react";
-import { createHotAccount, getAccountNonce, loginUser } from "../utils";
-import { useNavigate } from "react-router";
-import MetamaskFox from "./../metamask_fox.svg";
+
+import {
+	selectLoginModalState,
+	sUpdateLoginModalIsOpen,
+} from "../redux/reducers";
 import { configs } from "../contracts";
-import { hexlify } from "ethers/lib/utils";
+import MetamaskFox from "./../metamask_fox.svg";
 
 function LoginModal() {
 	const dispatch = useDispatch();
@@ -122,7 +121,6 @@ function LoginModal() {
 							Connect your wallet
 						</Text>
 					) : undefined}
-					{account && <p>Account: {account}</p>}
 					{chainId !== configs.chainId ? (
 						<Text
 							style={{
@@ -173,7 +171,7 @@ function LoginModal() {
 							marginRight={1}
 							color="#337DCF"
 							fontSize={18}
-							onClick={async () => {
+							onClick={() => {
 								window.open(
 									"https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
 								);
