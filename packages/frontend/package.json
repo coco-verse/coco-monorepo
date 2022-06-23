@@ -30,6 +30,7 @@
 		"i": "^0.3.7",
 		"immer": "^9.0.6",
 		"npm": "^8.10.0",
+		"prettier": "2.1.2",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-error-overlay": "^6.0.9",
@@ -47,7 +48,11 @@
 		"start-prod": "PORT=8000 REACT_APP_VERCEL_ENV=production react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"lint": "yarn lint:prettier --check && yarn lint:eslint",
+		"lint:fix": "yarn lint:prettier --write && yarn lint:eslint --fix",
+		"lint:eslint": "eslint './{src,test}/**/*.{js,jsx}'",
+		"lint:prettier": "yarn prettier './{src,test}/**/*.{js,jsx}'"
 	},
 	"eslintConfig": {
 		"extends": [

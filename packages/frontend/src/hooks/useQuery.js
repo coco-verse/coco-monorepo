@@ -1,4 +1,5 @@
-import { useQuery } from "urql";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useQuery } from 'urql';
 
 const QueryGroupsByManagers = `
 	query ($managers: [Bytes!]!) {
@@ -443,235 +444,220 @@ const QueryFeedByModeratorList = `
 `;
 
 export function useQueryGroupsByManagers(managers, pause) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryGroupsByManagers,
-		variables: {
-			managers,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryGroupsByManagers,
+    variables: {
+      managers,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryMarketsInResolutionByGroups(groups, timestamp, pause) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryMarketsInResolutionByGroups,
-		variables: {
-			groups,
-			timestamp,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryMarketsInResolutionByGroups,
+    variables: {
+      groups,
+      timestamp,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryUserMarketsAndPositions(user, pause) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryUserMarketsAndPositions,
-		variables: {
-			user,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryUserMarketsAndPositions,
+    variables: {
+      user,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryGroupById(groupId, pause) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryGroupById,
-		variables: {
-			groupId,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryGroupById,
+    variables: {
+      groupId,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryBadMarketIdentifiers(pause) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryBadMarketIdentifiers,
-		variables: {},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryBadMarketIdentifiers,
+    variables: {},
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
-export function useQueryUserPositionsByMarketIdentifier(
-	user,
-	marketIdentifier,
-	pause
-) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryUserPositionsByMarketIdentifier,
-		variables: {
-			user,
-			marketIdentifier,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+export function useQueryUserPositionsByMarketIdentifier(user, marketIdentifier, pause) {
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryUserPositionsByMarketIdentifier,
+    variables: {
+      user,
+      marketIdentifier,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryExploreMarkets(first, skip, timestamp, pause) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryExploreMarkets,
-		variables: {
-			first,
-			skip,
-			timestamp,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryExploreMarkets,
+    variables: {
+      first,
+      skip,
+      timestamp,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryMarketByOracles(first, skip, oracles, pause) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryMarketsByOracles,
-		variables: {
-			first,
-			skip,
-			oracles,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryMarketsByOracles,
+    variables: {
+      first,
+      skip,
+      oracles,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryMarketsOrderedByLatest() {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryExploreMarkets,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryExploreMarkets,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
-export function useQueryMarketByMarketIdentifier(
-	marketIdentifier,
-	pause = false
-) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryMarketByMarketIdentifier,
-		variables: {
-			marketIdentifier,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+export function useQueryMarketByMarketIdentifier(marketIdentifier, pause = false) {
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryMarketByMarketIdentifier,
+    variables: {
+      marketIdentifier,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
-export function useQueryMarketTradeAndStakeInfoByUser(
-	marketIdentifier,
-	user,
-	pause = false
-) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryMarketTradeAndStakeInfoByUser,
-		variables: {
-			user,
-			marketIdentifier,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+export function useQueryMarketTradeAndStakeInfoByUser(marketIdentifier, user, pause = false) {
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryMarketTradeAndStakeInfoByUser,
+    variables: {
+      user,
+      marketIdentifier,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
-export function useQueryTokenApprovalsByUserAndOracle(
-	user,
-	oracle,
-	pause = false
-) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryTokenApprovalsByUserAndOracle,
-		variables: {
-			user,
-			oracle,
-		},
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+export function useQueryTokenApprovalsByUserAndOracle(user, oracle, pause = false) {
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryTokenApprovalsByUserAndOracle,
+    variables: {
+      user,
+      oracle,
+    },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryOraclesByManager(manager, pause = false) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryOraclesByManager,
-		variables: { manager },
-		pause,
-	});
-	return { result, reexecuteQuery };
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryOraclesByManager,
+    variables: { manager },
+    pause,
+  });
+  return { result, reexecuteQuery };
 }
 
 export function useQueryMarketsAtStage3ByOracles(oracles, pause = false) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryMarketsAtStage3ByOracles,
-		variables: { oracles },
-		pause,
-	});
-	return { result, reexecuteQuery };
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryMarketsAtStage3ByOracles,
+    variables: { oracles },
+    pause,
+  });
+  return { result, reexecuteQuery };
 }
 
 export function useQueryMarketsByUserInteraction(user, pause = false) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryMarketsByUserInteraction,
-		variables: { user },
-		pause,
-	});
-	return { result, reexecuteQuery };
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryMarketsByUserInteraction,
+    variables: { user },
+    pause,
+  });
+  return { result, reexecuteQuery };
 }
 export function useQueryTokenBalancesByUser(user, pause = false) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryTokenBalancesByUser,
-		variables: { user },
-		pause,
-	});
-	return { result, reexecuteQuery };
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryTokenBalancesByUser,
+    variables: { user },
+    pause,
+  });
+  return { result, reexecuteQuery };
 }
 
 export function useQueryOracleById(id, pause = false) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryOracleById,
-		variables: { id },
-		pause,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryOracleById,
+    variables: { id },
+    pause,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 /**
@@ -679,33 +665,33 @@ export function useQueryOracleById(id, pause = false) {
  */
 
 export function useQueryAllOracles() {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryAllOracles,
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryAllOracles,
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
 export function useQueryOracleByDelegate(delegateAddress) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryOracleByDelegate,
-		variables: { delegate: delegateAddress },
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryOracleByDelegate,
+    variables: { delegate: delegateAddress },
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }
 
-export function useQueryFeedByModeratorList(moderators, pause = false) {
-	const [result, reexecuteQuery] = useQuery({
-		query: QueryFeedByModeratorList,
-		variables: { moderators },
-	});
-	return {
-		result,
-		reexecuteQuery,
-	};
+export function useQueryFeedByModeratorList(moderators, _pause = false) {
+  const [result, reexecuteQuery] = useQuery({
+    query: QueryFeedByModeratorList,
+    variables: { moderators },
+  });
+  return {
+    result,
+    reexecuteQuery,
+  };
 }

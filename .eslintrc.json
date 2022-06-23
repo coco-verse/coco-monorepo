@@ -5,41 +5,45 @@
     "mocha": true,
     "browser": true
   },
-  "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "eslint:recommended"
-  ],
-  "plugins": [
-    "no-only-tests"
-  ],
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": "./tsconfig.json",
-    "sourceType": "module"
-  },
+  "extends": ["plugin:@typescript-eslint/recommended", "eslint:recommended"],
+  "plugins": ["no-only-tests"],
+  // "parser": "@typescript-eslint/parser",
+  // "parserOptions": {
+  //   //"project": "./tsconfig.json",
+  //   "sourceType": "module"
+  //   //"tsconfigRootDir": "./tsconfig.json"
+  // },
   "ignorePatterns": [".eslintrc.js"],
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-floating-promises": "error",
+    //"@typescript-eslint/no-floating-promises": "error",
     "no-redeclare": "off",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["error"],
-    "prefer-const": ["error", {"destructuring": "all"}],
-    "semi": ["error", "never"],
+    "prefer-const": ["error", { "destructuring": "all" }],
+    "semi": ["error", "always"],
     "no-extra-semi": "off",
     "no-only-tests/no-only-tests": "error",
     "@typescript-eslint/no-extra-semi": "off"
   },
   "overrides": [
     {
-      "files": [
-        "test/**/*.{js,ts,tsx}"
-      ],
+      "files": ["test/**/*.{js,ts,tsx}"],
       "rules": {
         "@typescript-eslint/no-non-null-assertion": "off",
         "no-unused-expressions": "off"
       }
     }
   ]
+  // "sort-imports": [
+  //   "error",
+  //   {
+  //     "ignoreCase": false,
+  //     "ignoreDeclarationSort": false,
+  //     "ignoreMemberSort": false,
+  //     "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
+  //     "allowSeparatedGroups": false
+  //   }
+  // ]
 }

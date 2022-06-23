@@ -98,6 +98,7 @@ importers:
       i: ^0.3.7
       immer: ^9.0.6
       npm: ^8.10.0
+      prettier: 2.1.2
       react: ^17.0.2
       react-dom: ^17.0.2
       react-error-overlay: ^6.0.9
@@ -137,6 +138,7 @@ importers:
       i: 0.3.7
       immer: 9.0.15
       npm: 8.12.1
+      prettier: 2.1.2
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-error-overlay: 6.0.11
