@@ -31,20 +31,32 @@ function LoginModal() {
 	const { activateBrowserWallet, account } = useEthers();
 	const [chainId, setChainId] = useState(null);
 
-	useEffect(async () => {
-		if (window.ethereum) {
-			// get chainId for the first time
-			const id = await window.ethereum.request({
-				method: "eth_chainId",
-			});
-			setChainId(parseInt(id, 16));
+	useEffect(() => {
+		(
+			async () => {
+				if (window.ethereum) {
+					console.log("USEEFFECT CHAIN ID");
+					// get chainId for the first time
+					const id = await window.ethereum.request({
+						method: "eth_chainId",
+					});
+					setChainId(parseInt(id, 16));
+		
+					// attach listener that updates chainId whenever it changes
+					window.ethereum.on("chainChanged", (id) => {
+						setChainId(parseInt(id, 16));
+					});
+				}
+			}
+		)()
+	}, []);
 
-			// attach listener that updates chainId whenever it changes
-			window.ethereum.on("chainChanged", (id) => {
-				setChainId(parseInt(id, 16));
-			});
+	useEffect(() => {
+		if (account) {
+			dispatch(sUpdateLoginModalIsOpen(false));
 		}
-	}, [window.ethereum]);
+	}, [account, dispatch])
+
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -101,9 +113,7 @@ function LoginModal() {
 							style={{
 								...styles.actionText,
 							}}
-							onClick={async () => {
-								activateBrowserWallet();
-							}}
+							onClick={activateBrowserWallet}
 							_hover={{
 								cursor: "pointer",
 								textDecoration: "underline",
@@ -112,6 +122,7 @@ function LoginModal() {
 							Connect your wallet
 						</Text>
 					) : undefined}
+					{account && <p>Account: {account}</p>}
 					{chainId !== configs.chainId ? (
 						<Text
 							style={{
