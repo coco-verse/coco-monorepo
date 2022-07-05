@@ -7,13 +7,19 @@
   },
   "scripts": {
     "nx": "nx",
+    "start:frontend:dev": "cd packages/frontend && pnpm start-dev",
+    "start:frontend:prod": "cd packages/frontend && pnpm start-prod",
+    "start:backend:dev": "cd packages/backend && pnpm start",
     "preinstall": "npx only-allow pnpm",
     "lint": "wsrun -c -s lint",
     "lint:fix": "wsrun -c -s lint:fix",
     "build": "pnpm run -r build",
     "test": "wsrun -e -c -s --exclude-missing test",
     "version": "pnpm changeset version && pnpm install",
-    "release": "pnpm build && pnpm changeset publish"
+    "release": "pnpm build && pnpm changeset publish",
+    "clean": "rm -rf packages/frontend/node_modules packages/backend/node_modules",
+    "clean:frontend": "rm -rf packages/frontend/node_modules",
+    "clean:backend": "rm -rf packages/backend/node_modules"
   },
   "dependencies": {
     "@changesets/cli": "^2.14.1",

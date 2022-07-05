@@ -1,7 +1,7 @@
-import uiReducer from "./ui";
+import uiReducer from './ui';
 
 export default {
-	ui: uiReducer,
+  ui: uiReducer,
 };
 
-export * from "./ui";
+export * from './ui';
