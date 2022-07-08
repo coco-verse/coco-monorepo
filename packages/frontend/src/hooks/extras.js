@@ -7,12 +7,12 @@ import { useERC20TokenAllowance, useERC1155ApprovalForAll } from './useContractC
 export function useERC20TokenAllowanceWrapper(erc20Address, account, approvalToAddress, erc20AmountBn) {
   const allowance = useERC20TokenAllowance(erc20Address, account, approvalToAddress);
 
-  return allowance === undefined ? true : erc20AmountBn.lte(allowance);
+  return allowance == undefined ? true : erc20AmountBn.lte(allowance);
 }
 
 export function useERC1155ApprovalForAllWrapper(groupAddress, account, approvalToAddress) {
   const approval = useERC1155ApprovalForAll(groupAddress, account, approvalToAddress);
-  return approval === undefined ? true : approval;
+  return approval == undefined ? true : approval;
 }
 
 // Gets safes owned by account
@@ -36,11 +36,11 @@ export function useGetSafesAndGroupsManagedByUser(account) {
   useEffect(() => {
     (async () => {
       try {
-        if (account === undefined) {
+        if (account == undefined) {
           return;
         }
         const res = await safeService.getSafesByOwner(account);
-        if (res === undefined || res.safes === undefined) {
+        if (res == undefined || res.safes == undefined) {
           return;
         }
         setSafes(res.safes);

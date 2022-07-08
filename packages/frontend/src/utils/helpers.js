@@ -6,7 +6,7 @@ import { MULTIPLIER_BASE, MULTIPLIER } from '.';
 import { configs } from './../contracts';
 
 export function formatMarketData(market, onChain) {
-  if (onChain === true) {
+  if (onChain == true) {
     const stakes = market.stakes.map((stake) => {
       return {
         ...stake,
@@ -44,7 +44,7 @@ export function formatMarketData(market, onChain) {
 export function roundDecimalStr(value, dp = 6) {
   let _value = value;
   try {
-    if (typeof _value === 'string') {
+    if (typeof _value == 'string') {
       _value = Number(_value);
     }
   } catch (e) {
@@ -57,7 +57,7 @@ export function roundDecimalStr(value, dp = 6) {
 export function numStrFormatter(value, digits = 1) {
   let _value = value;
   try {
-    if (typeof _value === 'string') {
+    if (typeof _value == 'string') {
       _value = Number(_value);
     }
   } catch (e) {
@@ -84,7 +84,7 @@ export function parseDecimalToBN(val, base = 18) {
 
 export function formatBNToDecimal(val, base = 18, round = true, dp = 6) {
   val = ethers.utils.formatUnits(val, base);
-  if (round === true) {
+  if (round == true) {
     val = roundDecimalStr(val, dp);
   }
   return val;
@@ -120,9 +120,9 @@ export function useBNInput(validationFn) {
 
   useEffect(() => {
     try {
-      const bn = parseDecimalToBN(`${input === undefined || input === '' || input === '.' ? '0' : input}`);
+      const bn = parseDecimalToBN(`${input == undefined || input == '' || input == '.' ? '0' : input}`);
       setBnValue(bn);
-      if (validationFn !== undefined) {
+      if (validationFn != undefined) {
         const { valid, expStr } = validationFn(bn);
         if (!valid) {
           throw Error(expStr);
@@ -237,13 +237,13 @@ export function calculateRedeemObj(market, account, userPositions) {
   }
 
   // user gets back their stake on the right outcome
-  total = total.add(market.outcome === 0 ? userPositions.amount0 : userPositions.amount1);
+  total = total.add(market.outcome == 0 ? userPositions.amount0 : userPositions.amount1);
 
-  if (market.outcome === 0 && market.staker0.toLowerCase() === account.toLowerCase()) {
+  if (market.outcome == 0 && market.staker0.toLowerCase() == account.toLowerCase()) {
     total = total.add(market.reserve1);
     wins = market.reserve1;
   }
-  if (market.outcome === 1 && market.staker1.toLowerCase() === account.toLowerCase()) {
+  if (market.outcome == 1 && market.staker1.toLowerCase() == account.toLowerCase()) {
     total = total.add(market.reserve0);
     wins = market.reserve0;
   }
@@ -259,21 +259,21 @@ export function calculateRedeemObj(market, account, userPositions) {
 export function formatMetadata(metadata) {
   const final = {};
 
-  if (metadata.twitterTitle !== undefined) {
+  if (metadata.twitterTitle != undefined) {
     final.title = metadata.twitterTitle;
-  } else if (metadata.ogTitle !== undefined) {
+  } else if (metadata.ogTitle != undefined) {
     final.title = metadata.ogTitle;
   }
 
-  if (metadata.twitterDescription !== undefined) {
+  if (metadata.twitterDescription != undefined) {
     final.description = metadata.twitterDescription;
-  } else if (metadata.ogDescription !== undefined) {
+  } else if (metadata.ogDescription != undefined) {
     final.description = metadata.ogDescription;
   }
 
-  if (metadata.twitterImage !== undefined) {
+  if (metadata.twitterImage != undefined) {
     final.imageUrl = metadata.twitterImage.url;
-  } else if (metadata.ogImage !== undefined) {
+  } else if (metadata.ogImage != undefined) {
     final.imageUrl = metadata.ogImage.url;
   }
 

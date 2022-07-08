@@ -5,7 +5,7 @@ import { generateRequestSignatures } from './auth';
 
 export const baseInstance = axios.create({
   baseURL: (() => {
-    if (process.env.REACT_APP_VERCEL_ENV === 'development') {
+    if (process.env.REACT_APP_VERCEL_ENV == 'development') {
       return 'http://127.0.0.1:3000';
     } else {
       // return "http://127.0.0.1:3000";

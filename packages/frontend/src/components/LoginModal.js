@@ -89,7 +89,7 @@ function LoginModal() {
           <Image width="30%" src={MetamaskFox} />
           <Heading size="xl">Metamask</Heading>
 
-          {chainId === configs.chainId ? (
+          {chainId == configs.chainId ? (
             <Text
               style={{
                 ...styles.actionText,
@@ -103,7 +103,7 @@ function LoginModal() {
               Connect your wallet
             </Text>
           ) : undefined}
-          {chainId !== configs.chainId ? (
+          {chainId != configs.chainId ? (
             <Text
               style={{
                 ...styles.actionText,
@@ -139,7 +139,7 @@ function LoginModal() {
         </Flex>
 
         {/* TODO I cannot recall what was in palce of `true`, but it was something important  */}
-        {chainId === -1 || true ? (
+        {chainId == -1 || true ? (
           <Flex justifyContent="center" paddingTop={5} alignItems="center">
             <Text
               marginRight={1}

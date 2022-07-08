@@ -21,11 +21,11 @@ function ChallengeHistoryTable({ stakes }) {
           <Tr key={index}>
             <Td>{sliceAddress(obj.user.id)}</Td>
             <Td>{formatBNToDecimalCurr(obj.amount)}</Td>
-            <Td>{obj.outcome === 1 ? 'Yes' : 'No'}</Td>
+            <Td>{obj.outcome == 1 ? 'Yes' : 'No'}</Td>
           </Tr>
         ))}
       </Table>
-      {stakes.length === 0 ? (
+      {stakes.length == 0 ? (
         <Flex justifyContent="center" padding={5}>
           <Text fontSize={10}>No Challenges</Text>
         </Flex>

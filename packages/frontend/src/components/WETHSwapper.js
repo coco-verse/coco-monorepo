@@ -26,7 +26,7 @@ function WETHSwapper() {
   } = useBNInput(validateEthInput);
 
   useEffect(() => {
-    if (state.status === 'Success') {
+    if (state.status == 'Success') {
       setSwapLoading(false);
       toast({
         title: 'Swap Success!',
@@ -35,7 +35,7 @@ function WETHSwapper() {
       });
     }
 
-    if (state.status === 'Exception' || state.status === 'Fail') {
+    if (state.status == 'Exception' || state.status == 'Fail') {
       setSwapLoading(false);
       toast({
         title: 'Metamask err! Make sure you have enough test ETH to send transaction.',
@@ -47,7 +47,7 @@ function WETHSwapper() {
   }, [state]);
 
   function validateEthInput() {
-    if (ethBalance === undefined || inputEthBn.lte(ethBalance)) {
+    if (ethBalance == undefined || inputEthBn.lte(ethBalance)) {
       return { valid: true, expStr: '' };
     }
 
@@ -84,7 +84,7 @@ function WETHSwapper() {
         </NumberInput>
         <Text fontSize={14}>{`ETH`}</Text>
       </HStack>
-      {inputEthErr === true ? (
+      {inputEthErr == true ? (
         <Text
           style={{
             fontSize: 12,
@@ -97,9 +97,9 @@ function WETHSwapper() {
       <PrimaryButton
         isLoading={swapLoading}
         loadingText="Processing..."
-        disabled={inputEthErr === true}
+        disabled={inputEthErr == true}
         onClick={() => {
-          if (inputEthErr === true || inputEthBn.isZero()) {
+          if (inputEthErr == true || inputEthBn.isZero()) {
             return;
           }
 

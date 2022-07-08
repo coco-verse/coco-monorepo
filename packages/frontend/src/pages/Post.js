@@ -117,9 +117,9 @@ function Page() {
   // const isUserAnOwner =
   // 	groupIds.find(
   // 		(id) =>
-  // 			post !== undefined &&
-  // 			id.toLowerCase() === post.groupAddress.toLowerCase()
-  // 	) !== undefined
+  // 			post != undefined &&
+  // 			id.toLowerCase() == post.groupAddress.toLowerCase()
+  // 	) != undefined
   // 		? true
   // 		: false;
 
@@ -131,10 +131,10 @@ function Page() {
   useEffect(() => {
     // return if initial challenge isn't present
     if (
-      post === undefined ||
-      post.initStatus === undefined ||
-      post.initStatus === SUBMISSION_STATUS.UNINITIALIZED ||
-      post.initStatus === SUBMISSION_STATUS.DUMPED
+      post == undefined ||
+      post.initStatus == undefined ||
+      post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ||
+      post.initStatus == SUBMISSION_STATUS.DUMPED
     ) {
       // uninitialized or dumped
       setMarketState(0);
@@ -177,7 +177,7 @@ function Page() {
         ..._marketData,
         onChain: true,
       });
-    } else if (post !== null) {
+    } else if (post != null) {
       // market does not exists on chain
       // populate challenge using creator's market data obj
       const _marketData = formatMarketData(JSON.parse(post.challengeData), false);
@@ -204,7 +204,7 @@ function Page() {
 
   // set user postions
   useEffect(() => {
-    if (rUserPositions.data && rUserPositions.data.userPositions.length !== 0) {
+    if (rUserPositions.data && rUserPositions.data.userPositions.length != 0) {
       setUserPositions({
         ...rUserPositions.data.userPositions[0],
         amount0: parseDecimalToBN(rUserPositions.data.userPositions[0].amount0),
@@ -214,11 +214,11 @@ function Page() {
   }, [rUserPositions]);
 
   // get post details using postId;
-  // note: postId === marketIdentifier
+  // note: postId == marketIdentifier
   useEffect(() => {
     (async () => {
       const res = await findSubmissionsByIdentifiers([postId]);
-      if (res === undefined || res.submissions.length === 0) {
+      if (res == undefined || res.submissions.length == 0) {
         // TODO set error
         return;
       }
@@ -231,21 +231,21 @@ function Page() {
   // tracks loading state of contract fn calls
   useMemo(() => {
     if (
-      stateCreateAndChallenge.status === 'Success' ||
-      stateChallenge.status === 'Success' ||
-      stateRedeem.status === 'Success'
+      stateCreateAndChallenge.status == 'Success' ||
+      stateChallenge.status == 'Success' ||
+      stateRedeem.status == 'Success'
     ) {
       setTimeout(() => {
         setContractFnCallLoading(false);
         window.location.reload();
       }, GRAPH_BUFFER_MS);
     } else if (
-      stateCreateAndChallenge.status === 'Fail' ||
-      stateChallenge.status === 'Fail' ||
-      stateRedeem.status === 'Fail' ||
-      stateCreateAndChallenge.status === 'Exception' ||
-      stateChallenge.status === 'Exception' ||
-      stateRedeem.status === 'Exception'
+      stateCreateAndChallenge.status == 'Fail' ||
+      stateChallenge.status == 'Fail' ||
+      stateRedeem.status == 'Fail' ||
+      stateCreateAndChallenge.status == 'Exception' ||
+      stateChallenge.status == 'Exception' ||
+      stateRedeem.status == 'Exception'
     ) {
       toast({
         title: 'Metamask err!',
@@ -259,7 +259,7 @@ function Page() {
 
   // whenever wEthBalance changes, refresh the input
   useEffect(() => {
-    if (wETHTokenBalance !== undefined) {
+    if (wETHTokenBalance != undefined) {
       setInput(input);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -283,7 +283,7 @@ function Page() {
     }
 
     // check bnValue is lte tokenBalance
-    if (wETHTokenBalance === undefined || !bnValue.lte(wETHTokenBalance)) {
+    if (wETHTokenBalance == undefined || !bnValue.lte(wETHTokenBalance)) {
       return {
         valid: false,
         expStr: 'Insufficient Balance',
@@ -298,7 +298,7 @@ function Page() {
 
   // async function setOutcomeHelper() {
   // 	// throw if user isn't authenticated
-  // 	if (!account || isUserAnOwner === false) {
+  // 	if (!account || isUserAnOwner == false) {
   // 		toast({
   // 			title: "Invalid request!",
   // 			status: "error",
@@ -309,7 +309,7 @@ function Page() {
 
   // 	// throw if outcome to delare is not chosen
   // 	if (
-  // 		chosenOutcome === undefined ||
+  // 		chosenOutcome == undefined ||
   // 		chosenOutcome < 0 ||
   // 		chosenOutcome > 1
   // 	) {
@@ -323,10 +323,10 @@ function Page() {
 
   // 	// throw if any of necessary values are missing
   // 	if (
-  // 		marketData.onChain === false ||
-  // 		marketData.group.id === undefined ||
-  // 		marketData.group.manager === undefined ||
-  // 		account === undefined
+  // 		marketData.onChain == false ||
+  // 		marketData.group.id == undefined ||
+  // 		marketData.group.manager == undefined ||
+  // 		account == undefined
   // 	) {
   // 		toast({
   // 			title: "Invalid Inputs!",
@@ -357,7 +357,7 @@ function Page() {
 
     try {
       // validate that necessary data is present
-      if (post === undefined || account === undefined) {
+      if (post == undefined || account == undefined) {
         toast({
           title: 'Something went wrong!',
           status: 'error',
@@ -369,7 +369,7 @@ function Page() {
       // validate that user has given
       // sufficient token allowance to
       // GroupRouter
-      if (wETHTokenAllowance === false) {
+      if (wETHTokenAllowance == false) {
         toast({
           title: 'Please give WETH approval to app before proceeding!',
           status: 'error',
@@ -379,7 +379,7 @@ function Page() {
       }
 
       // validate user has enough balance
-      if (wETHTokenBalance === undefined || wETHTokenBalance.lt(CREATION_AMOUNT.add(ONE_BN))) {
+      if (wETHTokenBalance == undefined || wETHTokenBalance.lt(CREATION_AMOUNT.add(ONE_BN))) {
         toast({
           title: `min. of 0.05 ${configs.TokenSymbol} required!`,
           status: 'error',
@@ -408,7 +408,7 @@ function Page() {
         marketSignature,
         configs.Group
       );
-      if (res === undefined) {
+      if (res == undefined) {
         toast({
           title: 'Something went wrong!',
           status: 'error',
@@ -428,7 +428,7 @@ function Page() {
   return (
     <Flex width={'100%'}>
       <Flex width="70%" flexDirection={'column'} padding={5}>
-        {/* {loadingMarket === true ? <Loader /> : undefined} */}
+        {/* {loadingMarket == true ? <Loader /> : undefined} */}
         {/* <PostDisplay post={post} /> */}
         <Flex
           // flexDirection={"column"}
@@ -438,7 +438,7 @@ function Page() {
           marginBottom={4}
         >
           <Spacer>
-            {post && post.submissionPermalink !== undefined
+            {post && post.submissionPermalink != undefined
               ? parse(constructIFrame(`https://www.redditmedia.com${post.submissionPermalink}`))
               : undefined}
           </Spacer>
@@ -447,10 +447,10 @@ function Page() {
       </Flex>
       <Flex width="30%" flexDirection={'column'} paddingTop={5}>
         <Flex flexDirection={'column'} padding={2} backgroundColor={COLORS.PRIMARY} borderRadius={8} marginBottom={4}>
-          {post && post.initStatus === SUBMISSION_STATUS.DUMPED ? (
+          {post && post.initStatus == SUBMISSION_STATUS.DUMPED ? (
             <Text>Your failed to initialize in time</Text>
           ) : undefined}
-          {post && post.initStatus === SUBMISSION_STATUS.UNINITIALIZED ? (
+          {post && post.initStatus == SUBMISSION_STATUS.UNINITIALIZED ? (
             <>
               <Heading size="sm" marginBottom={2}>
                 Initialize Submission
@@ -468,17 +468,17 @@ function Page() {
             </>
           ) : undefined}
 
-          {marketState === 1 || marketState === 2 ? (
+          {marketState == 1 || marketState == 2 ? (
             <>
               <Heading size="sm" marginBottom={2}>
                 Challenge
               </Heading>
-              <TwoColTitleInfo title={'Temporary outcome:'} info={temporaryOutcome === 1 ? 'YES' : 'NO'} />
+              <TwoColTitleInfo title={'Temporary outcome:'} info={temporaryOutcome == 1 ? 'YES' : 'NO'} />
               <TwoColTitleInfo
                 title={'Min. Amount to Challenge:'}
                 info={`${formatBNToDecimalCurr(currentAmountBn.mul(TWO_BN))}`}
               />
-              {timeLeftToChallenge !== undefined ? (
+              {timeLeftToChallenge != undefined ? (
                 <TwoColTitleInfo
                   title={'Time left to challenge:'}
                   info={`${formatTimeInSeconds(timeLeftToChallenge)}`}
@@ -495,7 +495,7 @@ function Page() {
               >
                 <NumberInputField />
               </NumberInput>
-              {err === true ? (
+              {err == true ? (
                 <Text marginTop="1" marginBottom="1" fontSize="10" fontWeight="bold" color="red.300">
                   {errText}
                 </Text>
@@ -514,17 +514,17 @@ function Page() {
                   // validate values
                   if (
                     !validateInput(bnValue).valid ||
-                    groupAddress === undefined ||
+                    groupAddress == undefined ||
                     newOutcome > 1 ||
                     newOutcome < 0 ||
-                    marketIdentifier === undefined ||
-                    marketData === undefined
+                    marketIdentifier == undefined ||
+                    marketData == undefined
                   ) {
                     // TODO throw error
                     return;
                   }
 
-                  if (marketData.onChain === true) {
+                  if (marketData.onChain == true) {
                     // call challenge
                     sendChallenge(groupAddress, marketIdentifier, newOutcome, bnValue);
                   } else {
@@ -545,7 +545,7 @@ function Page() {
               />
             </>
           ) : undefined}
-          {marketState === 3 ? (
+          {marketState == 3 ? (
             <>
               <Heading size="sm" marginBottom={2}>
                 Submission is under review
@@ -553,14 +553,14 @@ function Page() {
               <TwoColTitleInfo title={'Time left for review:'} info={`${formatTimeInSeconds(timeLeftToResolve)}`} />
             </>
           ) : undefined}
-          {marketState === 4 ? (
+          {marketState == 4 ? (
             <>
               <Heading size="sm" marginBottom={2}>
                 Submission Resolved
               </Heading>
               <TwoColTitleInfo
                 title={'Final outcome:'}
-                info={`${temporaryOutcome === 0 ? 'NO' : 'YES'}`}
+                info={`${temporaryOutcome == 0 ? 'NO' : 'YES'}`}
                 marginBottom={1}
               />
 
@@ -569,11 +569,11 @@ function Page() {
               </Text>
               <TwoColTitleInfo
                 title={'In favour of YES:'}
-                info={`${formatBNToDecimalCurr(userPositions !== undefined ? userPositions.amount1 : ZERO_BN)}`}
+                info={`${formatBNToDecimalCurr(userPositions != undefined ? userPositions.amount1 : ZERO_BN)}`}
               />
               <TwoColTitleInfo
                 title={'In favour of NO:'}
-                info={`${formatBNToDecimalCurr(userPositions !== undefined ? userPositions.amount0 : ZERO_BN)}`}
+                info={`${formatBNToDecimalCurr(userPositions != undefined ? userPositions.amount0 : ZERO_BN)}`}
                 marginBottom={1}
               />
               <TwoColTitleInfo
@@ -595,7 +595,7 @@ function Page() {
                     return;
                   }
 
-                  if (marketIdentifier === undefined) {
+                  if (marketIdentifier == undefined) {
                     return;
                   }
 

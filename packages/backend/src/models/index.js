@@ -7,7 +7,7 @@ import { Submission } from "./submission";
 
 export const connectDb = async () => {
 	let options = {};
-	if (process.env.NODE_ENV === "production") {
+	if (process.env.NODE_ENV == "production") {
 		options = {
 			sslValidate: true,
 			sslCA: `${__dirname}/../rds-combined-ca-bundle.pem`,
