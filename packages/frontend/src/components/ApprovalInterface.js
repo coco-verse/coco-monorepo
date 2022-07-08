@@ -36,9 +36,9 @@ function ApprovalInterface({
   const [loading, setLoading] = useState(false);
 
   function isDisabled() {
-    if (tokenType === 0) {
+    if (tokenType == 0) {
       return erc20TokenAllowance;
-    } else if (tokenType === 1) {
+    } else if (tokenType == 1) {
       return erc1155TokenApproval;
     }
 
@@ -46,7 +46,7 @@ function ApprovalInterface({
   }
 
   useEffect(() => {
-    if (stateERC1155.status === 'Success' || stateToken.status === 'Success') {
+    if (stateERC1155.status == 'Success' || stateToken.status == 'Success') {
       setTimeout(() => {
         if (onSuccess) {
           onSuccess();
@@ -54,10 +54,10 @@ function ApprovalInterface({
         setLoading(false);
       }, 5000);
     } else if (
-      stateERC1155.status === 'Exception' ||
-      stateERC1155.status === 'Fail' ||
-      stateToken.status === 'Exception' ||
-      stateToken.status === 'Fail'
+      stateERC1155.status == 'Exception' ||
+      stateERC1155.status == 'Fail' ||
+      stateToken.status == 'Exception' ||
+      stateToken.status == 'Fail'
     ) {
       if (onFail) {
         onFail();
@@ -74,7 +74,7 @@ function ApprovalInterface({
   return (
     <Flex flexDirection={'column'} padding={2} backgroundColor={COLORS.PRIMARY} borderRadius={8} marginBottom={4}>
       <Text fontWeight="bold" fontSize={12}>
-        {tokenType === 0
+        {tokenType == 0
           ? `To spend your ${configs.TokenSymbol} tokens, you will first have to give approval to the app. This is only needed once.`
           : `To spend your YES/NO shares, you will first have to give approval to the app. This is only needed once per group`}
       </Text>
@@ -90,9 +90,9 @@ function ApprovalInterface({
 
           setLoading(true);
 
-          if (tokenType === 0) {
+          if (tokenType == 0) {
             sendToken(configs.GroupRouter, MAX_UINT_256);
-          } else if (tokenType === 1) {
+          } else if (tokenType == 1) {
             sendERC1155(configs.GroupRouter, true);
           } else {
             setLoading(false);

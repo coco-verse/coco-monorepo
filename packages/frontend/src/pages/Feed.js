@@ -33,7 +33,7 @@ function Page() {
           createdAt: -1,
         }
       );
-      if (res === undefined) {
+      if (res == undefined) {
         return;
       }
       setPosts(res.posts);
@@ -72,7 +72,7 @@ function Page() {
   return (
     <Flex width={'100%'}>
       <Flex flexDirection="column" width={'70%'} padding={5} minHeight="100vh">
-        {posts.length === 0 ? (
+        {posts.length == 0 ? (
           <Flex padding={2} backgroundColor={COLORS.PRIMARY} borderRadius={8} marginBottom={4} flexDirection={'column'}>
             <Text fontSize={15}>Nothing to Show... Try adding a link? ;)</Text>
           </Flex>

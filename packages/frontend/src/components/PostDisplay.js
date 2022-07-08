@@ -22,7 +22,7 @@ function PostDisplay({ post }) {
           <Text _hover={{ cursor: 'pointer' }} fontSize={14} marginBottom={2} fontWeight="bold">
             By {sliceAddress(post.creatorAddress)}
           </Text>
-          {urlMetadata.title && urlMetadata.title !== '' ? (
+          {urlMetadata.title && urlMetadata.title != '' ? (
             <Text _hover={{ cursor: 'pointer' }} fontSize={18} marginBottom={1} fontWeight="bold">
               {urlMetadata.title}
             </Text>

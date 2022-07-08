@@ -20,10 +20,10 @@ function InputWithTitle(
       valid: false,
       expText: 'Invalid input type',
     };
-    if (inputType === 0 || inputType === 1) {
+    if (inputType == 0 || inputType == 1) {
       res = validationFn(rValue);
     }
-    if (inputType === 2) {
+    if (inputType == 2) {
       res = validationFn(rValue, userBalance);
     }
 
@@ -46,7 +46,7 @@ function InputWithTitle(
       >
         {title}
       </Text>
-      {inputType === 0 ? (
+      {inputType == 0 ? (
         <HStack>
           <Input
             disabled={disabled}
@@ -62,10 +62,10 @@ function InputWithTitle(
             value={value}
             fontSize={15}
           />
-          {symbol !== undefined ? <Text fontSize={15}>{`${symbol}`}</Text> : undefined}
+          {symbol != undefined ? <Text fontSize={15}>{`${symbol}`}</Text> : undefined}
         </HStack>
       ) : undefined}
-      {inputType === 1 || inputType === 2 ? (
+      {inputType == 1 || inputType == 2 ? (
         <HStack>
           <NumberInput
             disabled={disabled}
@@ -82,10 +82,10 @@ function InputWithTitle(
           >
             <NumberInputField />
           </NumberInput>
-          {symbol !== undefined ? <Text fontSize={15}>{`${symbol}`}</Text> : undefined}
+          {symbol != undefined ? <Text fontSize={15}>{`${symbol}`}</Text> : undefined}
         </HStack>
       ) : undefined}
-      {valid === false ? (
+      {valid == false ? (
         <Text
           style={{
             fontSize: 12,

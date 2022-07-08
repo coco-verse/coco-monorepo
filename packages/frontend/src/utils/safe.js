@@ -4,9 +4,9 @@ import Safe from '@gnosis.pm/safe-core-sdk';
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib';
 
 const transactionServiceUrl = (() => {
-  if (process.env.REACT_APP_VERCEL_ENV === 'production') {
+  if (process.env.REACT_APP_VERCEL_ENV == 'production') {
     return 'https://cocosafe.efprivacyscaling.org/txs';
-  } else if (process.env.REACT_APP_VERCEL_ENV === 'preview') {
+  } else if (process.env.REACT_APP_VERCEL_ENV == 'preview') {
     return 'https://cocosafe.efprivacyscaling.org/txs';
   } else {
     return 'https://cocosafe.efprivacyscaling.org/txs';

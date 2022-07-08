@@ -15,7 +15,7 @@ import { configs } from './contracts';
 // setting up theGraph's endpoint
 const client = createClient({
   url: (() => {
-    if (process.env.REACT_APP_VERCEL_ENV === 'development') {
+    if (process.env.REACT_APP_VERCEL_ENV == 'development') {
       return 'https://reddit.graph.cocoverse.club/subgraphs/name/pm';
     } else {
       return 'https://reddit.graph.cocoverse.club/subgraphs/name/pm';
