@@ -3,7 +3,7 @@ import { models } from "../models";
 
 const router = Router();
 
-router.post("/find", async function (req, res, next) {
+router.post("/find", async function (req, res) {
 	const { filter } = req.body;
 
 	const stakes = await models.Stake.find(filter);

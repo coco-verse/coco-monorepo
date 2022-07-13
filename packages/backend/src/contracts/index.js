@@ -2,7 +2,11 @@ import dotenv from "dotenv";
 dotenv.config();
 import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
-import { ethers, BigNumber } from "ethers";
+import { ethers } from "ethers";
+import addresses_test from "./addresses-test.json";
+
+// TODO make this env dependent
+export const addresses = addresses_test;
 
 export const web3Provider = new ethers.providers.JsonRpcProvider(
 	process.env.ALCHEMY_URL
@@ -12,15 +16,9 @@ export const web3Provider = new ethers.providers.JsonRpcProvider(
 const groupContractAbi = [
 	"function marketStates(bytes32 marketIdentifier) view returns (uint64, uint64, uint64, uint64)",
 	"function marketDetails(bytes32 marketIdentifier) view returns (address, uint64, uint8)",
-
-	"event MarketCreated(bytes32 indexed marketIdentifier, address creator, address challenger)",
-	"event Challenged(bytes32 indexed marketIdentifier, address by, uint amount, uint8 outcome)",
-	"event Redeemed(bytes32 indexed marketIdentifier, address by)",
-	"event OutcomeSet(bytes32 indexed marketIdentifier)",
-	"event ConfigUpdated()",
 ];
 
-export function getGroupContractInstance(groupAddress = process.env.GROUP) {
+export function getGroupContractInstance(groupAddress) {
 	return new ethers.Contract(groupAddress, groupContractAbi, web3Provider);
 }
 

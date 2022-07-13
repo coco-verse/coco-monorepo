@@ -28,9 +28,9 @@ export const constants = {
  */
 export async function sendRemovalPrivateMessage(submissionId, reason) {
 	try {
-		let submission = await reddit.getSubmission(submissionId);
+		const submission = await reddit.getSubmission(submissionId);
 
-		let text = outdent`
+		const text = outdent`
 		**Reason:**${reason}
 
 		[link to your post](${await submission.permalink})
@@ -51,18 +51,18 @@ export async function sendRemovalPrivateMessage(submissionId, reason) {
 
 export async function replyToSubmission(submissionId, text) {
 	try {
-		let submission = await reddit.getSubmission(submissionId);
+		const submission = await reddit.getSubmission(submissionId);
 		await submission.reply(text);
 	} catch (e) {
 		log.error(
-			`[replyToSubmission] submissionId=${submissionId}; reply to submission failed with error=${e}`
+			`[replyToSubmission] submissionId=${submissionId}; reply to submission faile with error=${e}`
 		);
 	}
 }
 
 export async function flairSubmissionWithInvalid(submissionId) {
 	try {
-		let submission = await reddit.getSubmission(submissionId);
+		const submission = await reddit.getSubmission(submissionId);
 		await submission.assignFlair({
 			text: "INVALID",
 			cssClass: "no",
@@ -76,7 +76,7 @@ export async function flairSubmissionWithInvalid(submissionId) {
 
 export async function flairSubmissionWithOutcomeNo(submissionId) {
 	try {
-		let submission = await reddit.getSubmission(submissionId);
+		const submission = await reddit.getSubmission(submissionId);
 		await submission.assignFlair({
 			text: "NO",
 			cssClass: "no",
@@ -90,7 +90,7 @@ export async function flairSubmissionWithOutcomeNo(submissionId) {
 
 export async function removeSubmissionFlair(submissionId) {
 	try {
-		let submission = await reddit.getSubmission(submissionId);
+		const submission = await reddit.getSubmission(submissionId);
 		await submission.assignFlair({
 			text: "",
 			cssClass: "no",
@@ -103,8 +103,8 @@ export async function removeSubmissionFlair(submissionId) {
 }
 
 export function timeLeftForChallenge(donBufferEndsAt) {
-	let startTime = moment();
-	let endTime = moment(donBufferEndsAt);
-	let diff = endTime.diff(startTime);
+	const startTime = moment();
+	const endTime = moment(donBufferEndsAt);
+	const diff = endTime.diff(startTime);
 	return moment.utc(diff).format("HH:mm:ss");
 }

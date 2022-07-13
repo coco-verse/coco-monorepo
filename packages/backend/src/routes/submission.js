@@ -45,7 +45,7 @@ router.post("/initialise", async function (req, res, next) {
 	});
 });
 
-router.post("/find", async function (req, res, next) {
+router.post("/find", async function (req, res) {
 	const { filter } = req.body;
 
 	const submissions = await models.Submission.find(filter);

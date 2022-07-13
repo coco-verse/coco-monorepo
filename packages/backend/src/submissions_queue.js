@@ -25,7 +25,7 @@ export async function submissionsQueue() {
 }
 
 export function consumeQueue() {
-	let queue = submissionQueue;
+	const queue = submissionQueue;
 	submissionQueue = [];
 	return queue;
 }

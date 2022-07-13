@@ -4,9 +4,7 @@ import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import { addSubmission, findSubmission } from "./db_manager.js";
 import { keccackHash } from "./helpers.js";
-import { SubmissionSchema } from "./models/submission.js";
 import { consumeQueue } from "./submissions_queue.js";
-import { sendRemovalPrivateMessage } from "./submissions_sweeper.js";
 
 const timeoutIntervalSecs = 5;
 
@@ -34,13 +32,6 @@ async function processSubmission(submission) {
 		if (submissionExists != undefined) {
 			log.debug(
 				`[processSubmission] Submission with identifier ${marketIdentifier} exists`
-			);
-			return;
-		}
-		// if submission is older than 10 mins then don't process
-		if (submission.created_utc < new Date().getTime() / 1000 - 10 * 60) {
-			log.debug(
-				`[processSubmission] Submission with identifier ${marketIdentifier} old than 10 minutes`
 			);
 			return;
 		}

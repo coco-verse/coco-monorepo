@@ -4,11 +4,9 @@ import log from "loglevel";
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
 import {
 	dumpUninitialisedSubmissions,
-	removeFinalizedOutcomeNoByTimeExpiry,
 } from "./db_manager";
 import moment from "moment";
-import { reddit } from "./reddit";
-import { flairSubmissionWithInvalid, replyToSubmission } from "./helpers";
+import { flairSubmissionWithInvalid } from "./helpers";
 
 const timeoutInternalSecs = 10;
 export async function submissionsSweeper() {
@@ -24,8 +22,17 @@ export async function submissionsSweeper() {
 			index < dumpedSubmissionsRedditIds.length;
 			index++
 		) {
+			let submissionId;
+
 			try {
-				const submissionId = dumpedSubmissionsRedditIds[index];
+				try {
+					submissionId = dumpedSubmissionsRedditIds[index];
+				} catch (e) {
+					log.info(
+						`[submissionsSweeper] Dumping of Submission with id=${submissionId} errored with error=${e}`
+					);
+				}
+
 				flairSubmissionWithInvalid(submissionId);
 				log.info(
 					`[submissionsSweeper] Submission with id=${submissionId} made invalid; reason="Dumped because Uninitialised"`
