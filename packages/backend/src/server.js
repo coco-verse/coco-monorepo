@@ -1,19 +1,17 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
-import log from "loglevel";
-log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : "trace");
-import express from "express";
-import body_parser from "body-parser";
+import log from 'loglevel';
+log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : 'trace');
+import express from 'express';
+import body_parser from 'body-parser';
 const { urlencoded, json } = body_parser;
-import cors from "cors";
-import { submissionsQueue } from "./submissions_queue";
-import { submissionsProcessor } from "./submissions_processor";
-import { connectDb } from "./models";
-import {
-	submissionsSweeper,
-} from "./submissions_sweeper";
-import { startEventsSubscription } from "./chain_processor";
-import { routes } from "./routes";
+import cors from 'cors';
+import { submissionsQueue } from './submissions_queue';
+import { submissionsProcessor } from './submissions_processor';
+import { connectDb } from './models';
+import { submissionsSweeper } from './submissions_sweeper';
+import { startEventsSubscription } from './chain_processor';
+import { routes } from './routes';
 
 const port = process.env.PORT || 3000;
 
@@ -22,22 +20,22 @@ app.use(cors());
 app.use(urlencoded({ extended: true }));
 app.use(json());
 
-app.use("/submission", routes.submission);
+app.use('/submission', routes.submission);
 
-app.get("/", async function (req, res) {
-	res.send("Ok");
+app.get('/', async function (req, res) {
+  res.send('Ok');
 });
 
 async function main() {
-	await connectDb();
-	submissionsQueue();
-	submissionsProcessor();
-	submissionsSweeper();
-	startEventsSubscription();
+  await connectDb();
+  submissionsQueue();
+  submissionsProcessor();
+  submissionsSweeper();
+  startEventsSubscription();
 
-	app.listen(port, () => {
-		log.info(`[main] Listening on PORT=${port}`);
-	});
+  app.listen(port, () => {
+    log.info(`[main] Listening on PORT=${port}`);
+  });
 }
 
 main();
