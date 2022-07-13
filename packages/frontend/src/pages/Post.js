@@ -348,7 +348,6 @@ function Page() {
   // }
 
   function constructIFrame(url) {
-    console.log(url, ' this is');
     return `<iframe id="reddit-embed" src="${url}?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="600" width="600" scrolling="no"></iframe>`;
   }
 
@@ -420,7 +419,7 @@ function Page() {
       // reload page
       window.location.reload();
     } catch (e) {
-      console.log('initialiseMarket error with - ', e);
+      //console.log('initialiseMarket error with - ', e);
       setInitialiseLoading(false);
     }
   }

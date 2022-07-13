@@ -7,7 +7,11 @@
 		"start": "npm run build && node ./dist/server.js",
 		"clean": "rm -rf dist",
 		"build": "npm run clean && babel ./src --out-dir dist --copy-files",
-		"prod": "node ./dist/server.js"
+		"prod": "node ./dist/server.js",
+		"lint": "yarn lint:prettier --check && yarn lint:eslint",
+		"lint:fix": "yarn lint:prettier --write && yarn lint:eslint --fix",
+		"lint:eslint": "eslint './{src,test}/**/*.{js,jsx}'",
+		"lint:prettier": "yarn prettier './{src,test}/**/*.{js,jsx}'"
 	},
 	"author": "",
 	"license": "ISC",
@@ -25,6 +29,7 @@
 		"moment": "^2.29.1",
 		"mongoose": "^6.2.2",
 		"outdent": "^0.8.0",
+		"prettier": "2.1.2",
 		"snoowrap": "^1.23.0"
 	},
 	"devDependencies": {
