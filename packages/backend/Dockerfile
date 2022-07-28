@@ -1,0 +1,28 @@
+FROM node:16.12.0
+
+# Create app directory, this is in our container/in our image
+# RUN mkdir -p /usr/src/app
+WORKDIR "/app"
+
+RUN npm install -g pnpm
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (yarn@5+)
+COPY package.json ./
+COPY package-lock.json ./
+
+
+RUN pnpm install
+
+COPY . .
+
+# If you are building your code for production
+# RUN yarn ci --only=production
+
+# Bundle app source
+
+#RUN yarn build
+
+EXPOSE 8080
+CMD [ "pnpm", "run", "start" ]
