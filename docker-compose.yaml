@@ -1,0 +1,54 @@
+version: '3.4'
+services:
+  backend:
+    image: coco-backend:0.1
+    build:
+      dockerfile: Dockerfile
+      context: ./packages/backend
+    container_name: coco-backend
+    volumes:
+      - /app/backend/node_modules
+      - ./app/backend/:/app/backend
+    environment:
+      - SUBREDDIT=Cocotester
+      - BOT_USER_AGENT=COCO Bot
+      - BOT_CLIENT_ID=U2X66GaTRboCnAojreMx_A
+      - BOT_CLIENT_SECRET=iGah03Gyj9wYB9ZW3og15p4xyxSnoQ
+      - BOT_REFRESH_TOKEN=1806672871742-dPMiLrxBETp5bFwjtoiwt18OzE58aw
+      - BOT_ACCESS_TOKEN=1806672871742-9-G5agcMvRXgTQHJselOWt3SmBaWwg
+      - ALCHEMY_WSS_URL=wss://testnet.redditspace.com/rpc
+      - ALCHEMY_URL=https://testnet.redditspace.com/rpc
+      - DB_URI=mongodb://admin:admin@cluster0-shard-00-00.6iudo.mongodb.net:27017,cluster0-shard-00-01.6iudo.mongodb.net:27017,cluster0-shard-00-02.6iudo.mongodb.net:27017/?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority
+      - PORT=3000
+      - NODE_ENV=dev
+      - GROUP=0x94a1ecd1ed6695855c7b23d0405bca96ee373040
+      - FRONTEND_URI=http://127.0.0.1:8000/post
+    ports:
+      - "8080:3000"
+    networks:
+      - coco
+
+  frontend:
+    image: coco-frontend
+    build:
+      dockerfile: Dockerfile
+      context: ./packages/frontend
+    container_name: coco-frontend
+    volumes:
+      - /app/frontend/node_modules
+      - ./app/frontend/:/app/frontend
+    environment:
+      - REACT_APP_VERCEL_ENV=development
+    ports:
+      - '80:8000'
+    networks:
+      - coco
+
+networks:
+  coco:
+    external: true
+    name: coco
+
+# volumes:
+#   backend-data:
+

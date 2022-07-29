@@ -5,6 +5,7 @@ FROM node:16.12.0
 WORKDIR "/app"
 
 RUN npm install -g pnpm
+RUN npm config set registry http://registry.npmjs.org/
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
