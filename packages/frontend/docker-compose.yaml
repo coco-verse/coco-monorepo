@@ -1,0 +1,26 @@
+version: '3.4'
+services:
+  frontend:
+    image: coco-frontend
+    build:
+      dockerfile: Dockerfile
+      context: .
+    container_name: coco-frontend
+    volumes:
+      - /app/node_modules
+      - ./:/app
+    environment:
+      - REACT_APP_VERCEL_ENV=development
+    ports:
+      - '80:8000'
+    networks:
+      - coco
+
+networks:
+  coco:
+    external: true
+    name: coco
+
+volumes:
+  backend-data:
+
