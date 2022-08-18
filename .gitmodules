@@ -1,0 +1,8 @@
+
+   
+[submodule "packages/contracts/lib/ds-test"]
+	path = lib/ds-test
+	url = https://github.com/dapphub/ds-test
+[submodule "packages/contracts/lib/safe-contracts"]
+	path = lib/safe-contracts
+	url = https://github.com/gnosis/safe-contracts.git

@@ -22,3 +22,20 @@ A reddit bot that applies coco's way of moderation to subreddits is under develo
 Coco also has an extension that moderates content that you browse and saves you from misinformation. Download it [here](https://chrome.google.com/webstore/detail/coco/kpfgklfbadbbhabhipedcpbbninnlnlc). To know more about it check out my [tweet thread](https://twitter.com/Janmajaya_mall/status/1501463658760912896).
 
 We welcome contributions to Coco. Please feel free to discuss either on our [telegram](https://t.me/+A47HJeqh0-tlODI1) group or by opening an issue.
+
+
+## Getting started:
+
+### Docker
+
+- Build the monorepo images
+
+```sh
+docker-compose build --pull
+```
+
+- Run the docker composer 
+
+```sh
+docker-compose up -d 
+```
