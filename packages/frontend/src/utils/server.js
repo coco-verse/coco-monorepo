@@ -5,11 +5,14 @@ import { generateRequestSignatures } from './auth';
 
 export const baseInstance = axios.create({
   baseURL: (() => {
-    if (process.env.REACT_APP_VERCEL_ENV == 'development') {
+    if (process.env.REACT_APP_VERCEL_ENV == 'DEVELOPMENT') {
       return 'http://127.0.0.1:3000';
+    } else if (process.env.REACT_APP_VERCEL_ENV == 'STAGING') {
+      return 'http://13.40.12.252:3000';;
+    } else if (process.env.REACT_APP_VERCEL_ENV == 'PRODUCTION') {
+      return 'http://13.40.12.252:3000';;
     } else {
-      // return "http://127.0.0.1:3000";
-      return 'https://reddit.backend.cocoverse.club';
+      return 'http://127.0.0.1:3000';
     }
   })(),
   timeout: 10000,
