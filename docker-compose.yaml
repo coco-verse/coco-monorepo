@@ -38,7 +38,7 @@ services:
       - /app/frontend/node_modules
       - ./app/frontend/:/app/frontend
     environment:
-      - REACT_APP_VERCEL_ENV=development
+      - REACT_APP_VERCEL_ENV=STAGING
     ports:
       - '8080:8000'
     networks:

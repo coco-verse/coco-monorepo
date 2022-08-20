@@ -8,11 +8,11 @@ export const baseInstance = axios.create({
     if (process.env.REACT_APP_VERCEL_ENV == 'DEVELOPMENT') {
       return 'http://127.0.0.1:3000';
     } else if (process.env.REACT_APP_VERCEL_ENV == 'STAGING') {
-      return 'http://reddit.main.cocoverse.club/api/';
+      return 'http://reddit.main.cocoverse.club/api';
     } else if (process.env.REACT_APP_VERCEL_ENV == 'PRODUCTION') {
-      return 'http://reddit.main.cocoverse.club/api/';
+      return 'http://reddit.main.cocoverse.club/api';
     } else {
-      return 'http://127.0.0.1:3000';
+      return 'http://reddit.main.cocoverse.club/api';
     }
   })(),
   timeout: 10000,
