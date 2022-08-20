@@ -4,7 +4,7 @@ FROM node:16.12.0
 # RUN mkdir -p /usr/src/app
 WORKDIR "/app"
 
-RUN npm install -g pnpm
+#RUN npm install -g pnpm
 RUN npm config set registry http://registry.npmjs.org/
 
 # Install app dependencies
@@ -13,8 +13,10 @@ RUN npm config set registry http://registry.npmjs.org/
 COPY package.json ./
 COPY package-lock.json ./
 COPY .npmrc ./
+# TODO: remove this files (enhance Dockerfile)
+COPY .eslintrc.json ./
 
-RUN pnpm install 
+RUN npm install 
 
 COPY . .
 
@@ -26,4 +28,4 @@ COPY . .
 #RUN yarn build
 
 EXPOSE 8080
-CMD [ "pnpm", "run", "start-dev" ]
+CMD [ "npm", "run", "start-dev" ]

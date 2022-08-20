@@ -3,8 +3,8 @@
 pragma solidity ^0.8.0;
 
 import "./GroupProxy.sol";
-import "safe-contracts/proxies/GnosisSafeProxy.sol";
-import "safe-contracts/proxies/GnosisSafeProxyFactory.sol";
+import "../../lib/safe-contracts/proxies/GnosisSafeProxy.sol";
+import "../lib/safe-contracts/proxies/GnosisSafeProxyFactory.sol";
 
 contract GroupProxyFactory {
     event GroupCreated(GroupProxy indexed group);
