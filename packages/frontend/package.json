@@ -26,6 +26,7 @@
 		"framer-motion": "^4.0.0",
 		"graphql": "^16.0.1",
 		"html-react-parser": "^1.4.12",
+		"https": "^1.0.0",
 		"i": "^0.3.7",
 		"immer": "^9.0.6",
 		"npm": "^8.10.0",
