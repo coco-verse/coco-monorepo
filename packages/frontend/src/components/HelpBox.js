@@ -7,8 +7,8 @@ function HelpBox({ heading, pointsArr }) {
       <Heading size={'sm'} marginBottom={1}>
         {heading}
       </Heading>
-      {pointsArr.map((tx) => (
-        <Text fontSize={15}>{tx}</Text>
+      {pointsArr.map((tx, index) => (
+        <Text fontSize={15} key={index}>{tx}</Text>
       ))}
     </Flex>
   );
