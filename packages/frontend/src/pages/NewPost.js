@@ -128,7 +128,6 @@ function Page() {
       // TODO NAVIGATE TO POST PAGE
       navigate(`/post/${marketIdentifier}`);
     } catch (e) {
-      console.log(e, ' error in the end');
       setNewPostLoading(false);
     }
   }

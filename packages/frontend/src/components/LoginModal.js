@@ -22,7 +22,6 @@ function LoginModal() {
   useEffect(() => {
     (async () => {
       if (window.ethereum) {
-        console.log('USEEFFECT CHAIN ID');
         // get chainId for the first time
         const id = await window.ethereum.request({
           method: 'eth_chainId',
