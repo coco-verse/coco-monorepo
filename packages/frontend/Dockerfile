@@ -27,5 +27,5 @@ COPY . .
 
 #RUN yarn build
 
-EXPOSE 8080
+EXPOSE 8050
 CMD [ "npm", "run", "start-dev" ]
