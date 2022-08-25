@@ -15,8 +15,12 @@ import { configs } from './contracts';
 // setting up theGraph's endpoint
 const client = createClient({
   url: (() => {
-    if (process.env.REACT_APP_VERCEL_ENV == 'development') {
+    if (process.env.REACT_APP_VERCEL_ENV == 'DEVELOPMENT') {
       return 'https://reddit.graph.cocoverse.club/subgraphs/name/pm';
+    } else if (process.env.REACT_APP_VERCEL_ENV == 'STAGING') {
+      return 'https://reddit.main.cocoverse.club/graph/subgraphs/name/cocoverse/coco-staging';
+    } else if (process.env.REACT_APP_VERCEL_ENV == 'PRODUCTION') {
+      return 'https://reddit.main.cocoverse.club/graph/subgraphs/name/cocoverse/coco-production';
     } else {
       return 'https://reddit.graph.cocoverse.club/subgraphs/name/pm';
     }

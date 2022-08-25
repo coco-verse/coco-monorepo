@@ -40,7 +40,7 @@ services:
     environment:
       - REACT_APP_VERCEL_ENV=STAGING
     ports:
-      - '8080:8000'
+      - '8050:8050'
     networks:
       - coco
 

@@ -8,6 +8,7 @@
   "scripts": {
     "nx": "nx",
     "start:frontend:dev": "cd packages/frontend && pnpm start-dev",
+    "start:frontend:staging": "cd packages/frontend && pnpm start-staging",
     "start:frontend:prod": "cd packages/frontend && pnpm start-prod",
     "start:backend:dev": "cd packages/backend && pnpm start",
     "preinstall": "npx only-allow pnpm",
