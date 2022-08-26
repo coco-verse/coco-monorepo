@@ -21,6 +21,8 @@ const eventSignatures = {
 const abiCoder = ethers.utils.defaultAbiCoder;
 
 export async function eventsProcessor(error, logValue) {
+  log.error(`[eventsProcessor] starting event listener`);
+
   if (error != undefined) {
     log.error(`[eventsProcessor] log errored with ${error}`);
     return;
@@ -155,8 +157,22 @@ export function startEventsSubscription() {
   web3.eth.subscribe(
     'logs',
     {
+      fromBlock: 680000,
       address: addresses.Group,
     },
-    eventsProcessor
+    (e, result) => {
+      if (e) {
+        log.debug(`[eventProcessor] error happened ${e}`);
+      } else {
+        log.debug(`[eventProcessor] started web3 subscribe successfully ${result}`);
+        eventsProcessor()
+          .then(() => {
+            log.info(`[eventProcessor] started the events processor successfully`);
+          })
+          .catch((e) => {
+            log.debug(`[eventProcessor] Error in starting the events processor ${e}`);
+          });
+      }
+    }
   );
 }

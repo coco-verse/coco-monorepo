@@ -41,7 +41,7 @@ export async function submissionsSweeper() {
         submissionId = removedSubmissionsRedditIds[index];
         
         // TODO: Change to flair
-        flairSubmissionWithOutcomeNo(submissionId);
+        flairSubmissionWithInvalid(submissionId);
         log.info(`[submissionsSweeper] Submission with id=${submissionId} removed; reson="Final outcome is 0"`);
 
         // reply to submission about removal
