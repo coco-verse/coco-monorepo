@@ -154,25 +154,40 @@ async function reflectOnChainUpdatesInDb(marketIdentifier, updates) {
 }
 
 export function startEventsSubscription() {
-  web3.eth.subscribe(
-    'logs',
-    {
-      fromBlock: 680000,
-      address: addresses.Group,
-    },
-    (e, result) => {
-      if (e) {
-        log.debug(`[eventProcessor] error happened ${e}`);
-      } else {
-        log.debug(`[eventProcessor] started web3 subscribe successfully ${result}`);
-        eventsProcessor()
-          .then(() => {
-            log.info(`[eventProcessor] started the events processor successfully`);
-          })
-          .catch((e) => {
-            log.debug(`[eventProcessor] Error in starting the events processor ${e}`);
-          });
+  log.info(`[eventProcessor] Starting event subscription`);
+  
+  web3.eth
+    .subscribe(
+      'logs',
+      {
+        fromBlock: 680000,
+        address: addresses.Group,
+      },
+      (e, result) => {
+        if (e) {
+          log.debug(`[eventProcessor] error happened ${e}`);
+        } else {
+          log.debug(`[eventProcessor] started web3 subscribe successfully ${result}`);
+          eventsProcessor()
+            .then(() => {
+              log.info(`[eventProcessor] started the events processor successfully`);
+            })
+            .catch((e) => {
+              log.debug(`[eventProcessor] Error in starting the events processor ${e}`);
+            });
+        }
       }
-    }
-  );
+    )
+    .on('connected', function (subscriptionId) {
+      log.info(`[eventProcessor] connected to ${subscriptionId}`);
+    })
+    .on('data', function (log) {
+      log.info(`[eventProcessor] getting data ${log}`);
+    })
+    .on('changed', function (log) {
+      log.info(`[eventProcessor] subscription changed ${log}`);
+    })
+    .on(`error`, function (error) {
+      log.debug(`[eventProcessor] Error in connecting to web3 ${error}`);
+    });
 }
