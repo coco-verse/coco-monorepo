@@ -3,12 +3,15 @@ dotenv.config();
 import log from 'loglevel';
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : 'trace');
 import { createAlchemyWeb3 } from '@alch/alchemy-web3';
+import Web3 from 'web3';
 import { addresses, getMarketDetails, getMarketState } from './contracts';
 import { findSubmission, updateSubmissionDetails, addUserStake, increaseDonEscalationCount } from './db_manager';
 import { flairSubmissionWithOutcomeNo, removeSubmissionFlair } from './helpers';
 import { ethers } from 'ethers';
 
-const web3 = createAlchemyWeb3(process.env.ALCHEMY_WSS_URL);
+//const web3 = createAlchemyWeb3(process.env.ALCHEMY_WSS_URL);
+
+const web3 = new Web3(process.env.GRAPH_WSS_URL);
 
 const eventSignatures = {
   Challenged: '0x3acea3967c5be24f16b75421c5e477dd8b549db84bdfe6f359ec3eb9f1749ffb',
@@ -154,8 +157,8 @@ async function reflectOnChainUpdatesInDb(marketIdentifier, updates) {
 }
 
 export function startEventsSubscription() {
-  log.info(`[eventProcessor] Starting event subscription`);
-  
+  log.info(`[eventProcessor] Starting event subscription connecting to ${process.env.ALCHEMY_WSS_URL}`);
+
   web3.eth
     .subscribe(
       'logs',

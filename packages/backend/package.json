@@ -30,7 +30,8 @@
 		"mongoose": "^6.2.2",
 		"outdent": "^0.8.0",
 		"prettier": "2.1.2",
-		"snoowrap": "^1.23.0"
+		"snoowrap": "^1.23.0",
+		"web3": "^1.7.5"
 	},
 	"devDependencies": {
 		"@babel/node": "^7.16.8",

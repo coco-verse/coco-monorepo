@@ -56,7 +56,7 @@ async function main() {
               log.info(`[main] Error in starting the app`);
             }
           } catch (error) {
-            log.debug(`[main] Error in running the Event subscription`);
+            log.debug(`[main] Error in running the Event subscription ${error}`);
           }
         } catch (error) {
           log.debug(`[main] Error in running the Submissions Sweeper`);
