@@ -28,9 +28,9 @@ app.get('/', async function (req, res) {
 
 async function main() {
   await connectDb();
-  submissionsQueue();
-  submissionsProcessor();
-  submissionsSweeper();
+  await submissionsQueue();
+  await submissionsProcessor();
+  await submissionsSweeper();
   startEventsSubscription();
 
   app.listen(port, () => {
@@ -38,4 +38,6 @@ async function main() {
   });
 }
 
-main();
+main().catch(e => {
+  log.debug(`[Error] Error in the server ${e}`);
+});
