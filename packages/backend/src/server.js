@@ -27,15 +27,51 @@ app.get('/', async function (req, res) {
 });
 
 async function main() {
-  await connectDb();
-  submissionsQueue();
-  submissionsProcessor();
-  submissionsSweeper();
-  startEventsSubscription();
+  try {
+    log.info(`[main] Connecting to the DB`);
+    await connectDb();
 
-  app.listen(port, () => {
-    log.info(`[main] Listening on PORT=${port}`);
-  });
+    try {
+      log.info(`[main] Running the Submissions Queue`);
+      await submissionsQueue();
+
+      try {
+        log.info(`[main] Running the Submissions Processor`);
+        await submissionsProcessor();
+
+        try {
+          log.info(`[main] Running the Submissions Sweeper`);
+          await submissionsSweeper();
+
+          try {
+            log.info(`[main] Running the Event subscription`);
+            startEventsSubscription();
+
+            try {
+              log.info(`[main] Starting the app`);
+              app.listen(port, () => {
+                log.info(`[main] Listening on PORT=${port} 🚀`);
+              });
+            } catch (error) {
+              log.info(`[main] Error in starting the app`);
+            }
+          } catch (error) {
+            log.debug(`[main] Error in running the Event subscription ${error}`);
+          }
+        } catch (error) {
+          log.debug(`[main] Error in running the Submissions Sweeper`);
+        }
+      } catch (error) {
+        log.debug(`[main] Error in running the Submissions Processor`);
+      }
+    } catch (error) {
+      log.debug(`[main] Error in running the Submissions Queue`);
+    }
+  } catch (error) {
+    log.debug(`[main] Error in connecting to the DB`);
+  }
 }
 
-main();
+main().catch((e) => {
+  log.debug(`[Error] Error in the server ${e}`);
+});

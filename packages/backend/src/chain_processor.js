@@ -3,12 +3,15 @@ dotenv.config();
 import log from 'loglevel';
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : 'trace');
 import { createAlchemyWeb3 } from '@alch/alchemy-web3';
+import Web3 from 'web3';
 import { addresses, getMarketDetails, getMarketState } from './contracts';
 import { findSubmission, updateSubmissionDetails, addUserStake, increaseDonEscalationCount } from './db_manager';
 import { flairSubmissionWithOutcomeNo, removeSubmissionFlair } from './helpers';
 import { ethers } from 'ethers';
 
-const web3 = createAlchemyWeb3(process.env.ALCHEMY_WSS_URL);
+//const web3 = createAlchemyWeb3(process.env.ALCHEMY_WSS_URL);
+
+const web3 = new Web3(process.env.GRAPH_WSS_URL);
 
 const eventSignatures = {
   Challenged: '0x3acea3967c5be24f16b75421c5e477dd8b549db84bdfe6f359ec3eb9f1749ffb',
@@ -21,6 +24,8 @@ const eventSignatures = {
 const abiCoder = ethers.utils.defaultAbiCoder;
 
 export async function eventsProcessor(error, logValue) {
+  log.error(`[eventsProcessor] starting event listener`);
+
   if (error != undefined) {
     log.error(`[eventsProcessor] log errored with ${error}`);
     return;
@@ -152,11 +157,40 @@ async function reflectOnChainUpdatesInDb(marketIdentifier, updates) {
 }
 
 export function startEventsSubscription() {
-  web3.eth.subscribe(
-    'logs',
-    {
-      address: addresses.Group,
-    },
-    eventsProcessor
-  );
+  log.info(`[eventProcessor] Starting event subscription connecting to ${process.env.ALCHEMY_WSS_URL}`);
+
+  web3.eth
+    .subscribe(
+      'logs',
+      {
+        fromBlock: 680000,
+        address: addresses.Group,
+      },
+      (e, result) => {
+        if (e) {
+          log.debug(`[eventProcessor] error happened ${e}`);
+        } else {
+          log.debug(`[eventProcessor] started web3 subscribe successfully ${result}`);
+          eventsProcessor()
+            .then(() => {
+              log.info(`[eventProcessor] started the events processor successfully`);
+            })
+            .catch((e) => {
+              log.debug(`[eventProcessor] Error in starting the events processor ${e}`);
+            });
+        }
+      }
+    )
+    .on('connected', function (subscriptionId) {
+      log.info(`[eventProcessor] connected to ${subscriptionId}`);
+    })
+    .on('data', function (log) {
+      log.info(`[eventProcessor] getting data ${log}`);
+    })
+    .on('changed', function (log) {
+      log.info(`[eventProcessor] subscription changed ${log}`);
+    })
+    .on(`error`, function (error) {
+      log.debug(`[eventProcessor] Error in connecting to web3 ${error}`);
+    });
 }
