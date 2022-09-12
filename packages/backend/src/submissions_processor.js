@@ -30,7 +30,7 @@ async function processSubmission(submission) {
     const marketIdentifier = keccackHash(submission.permalink);
     const submissionExists = await findSubmission(marketIdentifier);
     if (submissionExists != undefined) {
-      log.debug(`[ERROR] [processSubmission] Submission with identifier ${marketIdentifier} exists`);
+      log.info(`[processSubmission] Submission with identifier ${marketIdentifier} exists`);
       return;
     }
 
