@@ -20,7 +20,7 @@ export async function submissionsProcessor() {
       submissionsProcessor();
     }, timeoutIntervalSecs * 1000);
   } catch (e) {
-    log.error(`[submissionsProcessor] ${e}`);
+    log.debug(`[ERROR] [submissionsProcessor] ${e}`);
   }
 }
 
@@ -30,7 +30,7 @@ async function processSubmission(submission) {
     const marketIdentifier = keccackHash(submission.permalink);
     const submissionExists = await findSubmission(marketIdentifier);
     if (submissionExists != undefined) {
-      log.debug(`[processSubmission] Submission with identifier ${marketIdentifier} exists`);
+      log.debug(`[ERROR] [processSubmission] Submission with identifier ${marketIdentifier} exists`);
       return;
     }
 
@@ -45,6 +45,6 @@ async function processSubmission(submission) {
       sticky: true,
     });
   } catch (e) {
-    log.error(`[processSubmission] ${e}`);
+    log.debug(`[ERROR] [processSubmission] ${e}`);
   }
 }

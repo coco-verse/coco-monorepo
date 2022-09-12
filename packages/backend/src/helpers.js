@@ -43,8 +43,8 @@ export async function sendRemovalPrivateMessage(submissionId, reason) {
       fromSubreddit: await submission.subreddit,
     });
   } catch (e) {
-    log.error(
-      `[sendRemovalPrivateMessage] submissionId=${submissionId}; private message to author of submission failed with error=${e}`
+    log.debug(
+      `[ERROR] [sendRemovalPrivateMessage] submissionId=${submissionId}; private message to author of submission failed with error=${e}`
     );
   }
 }
@@ -54,7 +54,7 @@ export async function replyToSubmission(submissionId, text) {
     const submission = await reddit.getSubmission(submissionId);
     await submission.reply(text);
   } catch (e) {
-    log.error(`[replyToSubmission] submissionId=${submissionId}; reply to submission faile with error=${e}`);
+    log.debug(`[ERROR] [replyToSubmission] submissionId=${submissionId}; reply to submission faile with error=${e}`);
   }
 }
 
@@ -66,7 +66,7 @@ export async function flairSubmissionWithInvalid(submissionId) {
       cssClass: 'no',
     });
   } catch (e) {
-    log.error(`[flairSubmissionWithInvalid] submissionId=${submissionId}; failed with error=${e}`);
+    log.debug(`[ERROR] [flairSubmissionWithInvalid] submissionId=${submissionId}; failed with error=${e}`);
   }
 }
 
@@ -78,7 +78,7 @@ export async function flairSubmissionWithOutcomeNo(submissionId) {
       cssClass: 'no',
     });
   } catch (e) {
-    log.error(`[flairSubmissionWithOutcomeNo] submissionId=${submissionId}; failed with error=${e}`);
+    log.debug(`[ERROR] [flairSubmissionWithOutcomeNo] submissionId=${submissionId}; failed with error=${e}`);
   }
 }
 
@@ -90,7 +90,7 @@ export async function removeSubmissionFlair(submissionId) {
       cssClass: 'no',
     });
   } catch (e) {
-    log.error(`[removeSubmissionFlair] submissionId=${submissionId}; failed with error=${e}`);
+    log.debug(`[ERROR] [removeSubmissionFlair] submissionId=${submissionId}; failed with error=${e}`);
   }
 }
 
