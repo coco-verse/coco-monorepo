@@ -20,7 +20,7 @@ export async function submissionsQueue() {
       submissionsQueue();
     }, timeoutInternalSecs * 1000);
   } catch (e) {
-    log.error(`[mainQueue] ${e}`);
+    log.debug(`[ERROR] [mainQueue] ${e}`);
   }
 }
 

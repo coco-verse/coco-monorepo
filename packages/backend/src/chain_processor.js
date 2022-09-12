@@ -16,8 +16,8 @@ async function reflectOnChainUpdatesInDb(groupAddress, marketIdentifier) {
 		!ethers.utils.isAddress(groupAddress) ||
 		!ethers.utils.isHexString(marketIdentifier)
 	) {
-		log.error(
-			`[reflectOnChainUpdatesInDb] received either invalid groupAddress:${groupAddress} or marketIdentifier:${JSON.stringify(
+		log.debug(
+			`[ERROR] [reflectOnChainUpdatesInDb] received either invalid groupAddress:${groupAddress} or marketIdentifier:${JSON.stringify(
 				marketIdentifier
 			)}`
 		);

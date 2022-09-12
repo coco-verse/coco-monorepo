@@ -615,8 +615,8 @@ export async function getMarketState(groupAddress, marketIdentifier) {
       resolutionBuffer: marketStateArr[3].toString(),
     };
   } catch (e) {
-    log.error(
-      `[getMarketState] groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}; fetch market state failed with error=${e}`
+    log.debug(
+      `[ERROR] [getMarketState] groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}; fetch market state failed with error=${e}`
     );
   }
 }
@@ -631,8 +631,8 @@ export async function getMarketDetails(groupAddress, marketIdentifier) {
       outcome: marketDetailsArr[2].toString(),
     };
   } catch (e) {
-    log.error(
-      `[getMarketDetails] groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}; fetch market details failed with error=${e}`
+    log.debug(
+      `[ERROR] [getMarketDetails] groupAddress=${groupAddress} marketIdentifier=${marketIdentifier}; fetch market details failed with error=${e}`
     );
   }
 }
